@@ -456,5 +456,6 @@ async def info(ctx, infotype=None):
 # loading variables from .env file
 #load_dotenv() 
 #bot.run(os.getenv("TOKEN")) #RUN BOT
+if __name__ == "__main__":
+    bot.run(os.environ.get("TOKEN")) #RUN BOT
 
-bot.run(os.environ.get("TOKEN")) #RUN BOT
