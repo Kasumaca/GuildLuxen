@@ -1,0 +1,80 @@
+{
+  "material_pot_cost": {
+    "fireele": ["element", "mana", 100, 150],
+    "waterele": ["element", "mana", 100, 150],
+    "windele": ["element", "mana", 100, 150],
+    "earthele": ["element", "mana", 100, 150],
+    "lightele": ["element", "mana", 100, 150],
+    "darkele": ["element", "mana", 100, 150],
+
+    "str": ["universal", "beast", 5, 25],
+    "str%": ["universal", "beast", 10, 50],
+    "int": ["universal", "wood", 5, 25],
+    "int%": ["universal", "wood", 10, 50],
+    "vit": ["universal", "metal", 5, 25],
+    "vit%": ["universal", "metal", 10, 50],
+    "agi": ["universal", "cloth", 5, 25],
+    "agi%": ["universal", "cloth", 10, 50],
+    "dex": ["universal", "medicine", 5, 25],
+    "dex%": ["universal", "medicine", 10, 50],
+
+    "nhp": ["defensive", "metal", 5, 25],
+    "nhp%": ["defensive", "metal", 10, 50],
+    "nmp": ["defensive", "wood", 10, 50],
+    "nmp%": ["defensive", "wood", 20, 100],
+
+    "maxhp": ["universal", "metal", 3, 16.5],
+    "maxhp%": ["universal", "metal", 10, 50],
+    "maxmp": ["universal", "wood", 6, 33],
+
+    "atk": ["offensive", "beast", 3, 16.5],
+    "atk%": ["offensive", "beast", 10, 50],
+    "matk": ["offensive", "wood", 3, 16.5],
+    "matk%": ["offensive", "wood", 10, 50],
+    "stability%": ["universal", "medicine", 20, 100],
+    "ppierce%": ["offensive", "beast", 20, 100],
+    "mpierce%": ["offensive", "wood", 20, 100],
+
+    "def": ["defensive", "metal", 3, 16.5],
+    "def%": ["defensive", "metal", 10, 50],
+    "mdef": ["defensive", "metal", 3, 16.5],
+    "mdef%": ["defensive", "metal", 10, 50],
+    "pres%": ["defensive", "metal", 10, 50],
+    "mres%": ["defensive", "wood", 10, 50],
+
+    "acc": ["offensive", "medicine", 10, 50],
+    "acc%": ["offensive", "medicine", 20, 100],
+    "dodge": ["defensive", "cloth", 10, 50],
+    "dodge%": ["defensive", "cloth", 20, 100],
+
+    "aspd": ["universal", "cloth", 1, 1],
+    "aspd%": ["universal", "cloth", 1, 5],
+    "cspd": ["universal", "medicine", 1, 1],
+    "cspd%": ["universal", "medicine", 1, 5],
+
+    "cr": ["universal", "mana", 1, 5],
+    "cr%": ["universal", "mana", 1, 5],
+    "cd": ["universal", "mana", 3, 16.5],
+    "cd%": ["universal", "mana", 10, 50],
+
+    "dtefire": ["offensive", "mana", 5, 25],
+    "dtewater": ["offensive", "mana", 5, 25],
+    "dtewind": ["offensive", "mana", 5, 25],
+    "dteearth": ["offensive", "mana", 5, 25],
+    "dtelight": ["offensive", "mana", 5, 25],
+    "dtedark": ["offensive", "mana", 5, 25],
+
+    "fireres%": ["defensive", "mana", 5, 25],
+    "waterres%": ["defensive", "mana", 5, 25],
+    "windres%": ["defensive", "mana", 5, 25],
+    "earthres%": ["defensive", "mana", 5, 25],
+    "lightres%": ["defensive", "mana", 5, 25],
+    "darkres%": ["defensive", "mana", 5, 25],
+
+    "alires%": ["universal", "mana", 20, 100],
+    "guardpower%": ["universal", "mana", 20, 100],
+    "guardrecharge%": ["universal", "mana", 20, 100],
+    "evasionrecharge%": ["universal", "mana", 20, 100],
+    "aggro%": ["universal", "mana", 6, 33]
+  }
+}

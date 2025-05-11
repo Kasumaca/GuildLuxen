@@ -1,0 +1,42 @@
+{
+    "SkyPhoenixChat" : [
+        [
+            "875310053257777158",
+            "https://discord.com/api/webhooks/1371142941480845352/-8zhIEd_1pn8dQ-KgT4Ro7PUEf0nEUej4IAkWvqST25YUfAPlHsOpMNPcBFhK-4hdXud"
+        ],
+        [
+            "743289293669138443",
+            "https://discord.com/api/webhooks/1371143052512460900/5RyssYYJTXVxs492A6lfwl_CC2tmYII-cfm3U86DEGwzwVdMKEVapLyzn4KY3zgPe-k3"
+        ]
+    ],
+    "alliancechat" : [
+        [
+            "1252860712875856003",
+            "https://discord.com/api/webhooks/1252861194482749542/KSBtjtEfWhVWOyQoyJw7ZN2U72XQSvLXA9kp_Qf4Jz0hPeDbYgiPgATt38sd0fhGD_0K"
+        ],
+        [
+            "1201476090720423967",
+            "https://discord.com/api/webhooks/1252861338179604533/ykhCQcyNHkdvbOJBXFXR6iPECzKJIt8xiKkuJ5LidWm36D1nVH0ThtQBnCHQmk1BIO6d"
+        ]
+    ],
+    "marketplace" : [
+        [
+            "927594349599006790",
+            "https://discord.com/api/webhooks/1252858232947609610/n-jpA2yDBpB1WOsnL_Xi5_cPs6B-ySuYujvUh9UHP8tuF2wf5goBc2p1B0FThHXGZ38n"
+        ],
+        [
+            "1251132143057240117",
+            "https://discord.com/api/webhooks/1252858347083010151/V2zuM_dB5ZEPqPYGVx8b-PR1tS38OsqXXSTgi9_MLGIf129Yy9Zxgff3_hSWrWdnHc4_"
+        ]
+    ],
+    "toram_announce" : [
+        [
+            "703684823658528808",
+            "https://discord.com/api/webhooks/1255041596274249789/ESj104sRcI95GyGrQn6J7WEjJ7b-xiMmQGQzMUKxrn5wRAjHCDBEVJo_z_a2SJqxnfnh"
+        ],
+        [
+            "927019511750750219",
+            "https://discord.com/api/webhooks/1255041641010692148/OjuicNwnhfMzvZHE7AZg0JkAAz157T8vAoJLXzmCC6k0SdVSoo8h7F9tmAc2vS0GywBK"
+        ]
+    ]
+}

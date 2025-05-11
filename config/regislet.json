@@ -1,0 +1,557 @@
+{
+  "Physical Attack Boost": {
+    "maxLevel": 30,
+    "description": "ATK +1 for each level. Max +30 ATK",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Magic Attack Boost": {
+    "maxLevel": 30,
+    "description": "MATK +1 for each level. Max +30 MATK",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Max HP Boost": {
+    "maxLevel": 100,
+    "description": "Max HP +10 for each level. Max +1000 MaxHP",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Max MP Boost": {
+    "maxLevel": 100,
+    "description": "Max MP +1 for each level. Max +100 MaxMP",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Physical Defense Boost": {
+    "maxLevel": 50,
+    "description": "DEF +1 for each level. Max +50 DEF",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Magic Defense Boost": {
+    "maxLevel": 50,
+    "description": "MDEF +1 for each level. Max +50 MDEF",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Accuracy Boost": {
+    "maxLevel": 10,
+    "description": "Accuracy +1 for each level. Max +10 Accuracy ",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Dodge Boost": {
+    "maxLevel": 10,
+    "description": "Dodge +1 for each level. Max +10 Dodge",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Attack Speed Boost": {
+    "maxLevel": 100,
+    "description": "ASPD +1 for each level. Max +100 ASPD",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Magic Speed Boost": {
+    "maxLevel": 100,
+    "description": "CSPD +1 for each level. Max +100 CSPD",
+    "level": [10, 30, 50, 70, 90, 110, 130, 150, 170, 190, 210, 220]
+  },
+  "Wayfarer": {
+    "maxLevel": 10,
+    "description": "Increases EXP Gain by 10% but lowers damage dealt by 14% (-1% per level). Max -5% Damage Dealt",
+    "level": [10, 30, 50, 70, 90]
+  },
+  "Sunbath": {
+    "maxLevel": 4,
+    "description": "When using Emotions that increase Natural Regen, an additional 25% of MP will be recovered. Max +100% Natural MP Regen when using Emoticon",
+    "level": [10, 30, 50, 70]
+  },
+  "Hard Hit Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Hard Hit” by 5%. Max +100%",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Sonic Blade Extender": {
+    "maxLevel": 20,
+    "description": "Extends the time you must reuse “Sonic Blade” to turn it into “Super Sonic Blade” by 1 seconds per level, Max +20 Secs Buff Duration",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Power Shot Boost": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Power Shot by 15% per level when Tumble is inflicted. Max +300% Power Shot's Damage when successfully Tumbling Target",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Bullseye Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Bullseye” by 5% per level. Max +100% Bullseye's Damage",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Magic Arrow Enhancer": {
+    "maxLevel": 4,
+    "description": "Adds one shot per level to the skill “Magic: Arrows. Max +4 Arrow Shot”.",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Magic Wall Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Magic: Wall” by 5% per level. Max +100% Wall's Damage",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Smash Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Smash” by 5% is used with knuckles",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Sonic Wave Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Sonic Wave” by 5% is used with knuckles",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Twin Slash Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the critical damage from “Twin Slash” by 1% per level",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Cross Parry Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Cross Parry” by 5% per level",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Flash Stab Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of “Flash Stab” by 5% per level",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Cannon Spear Enhancer": {
+    "maxLevel": 10,
+    "description": "Adds a 10% chance of inflicting “Flinch” to the first attack",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Issen Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of the second hit of “Issen” by 5% per level",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Pommel Strike Enhancer": {
+    "maxLevel": 5,
+    "description": "Extends the duration of Paralysis caused by the skill “Pommel Strike” by 1 second per level",
+    "level": [30, 50, 70, 90, 110, 130]
+  },
+  "Poison Heal": {
+    "maxLevel": 30,
+    "description": "1% per level chance having Poison status removed when taking damage inflicted by Poison",
+    "level": [30, 50]
+  },
+  "Cats's Eye": {
+    "maxLevel": 1,
+    "description": "A MISS hit while you are Blind may be turned into a GRAZE hit when possible",
+    "level": [30, 70]
+  },
+  "Emergency HP Heal": {
+    "maxLevel": 10,
+    "description": "Instantly restores 11% (+1% per level) of your HP when there is only 25% HP or less due to monster's attacks. Cooldown: 60 seconds",
+    "level": [30, 150]
+  },
+  "Neural Control": {
+    "maxLevel": 0,
+    "description": "Reduces the amount of ASPD lowered due to Paralysis by 2% per Registlet Level",
+    "level": [50, 70]
+  },
+  "Emergency MP Heal": {
+    "maxLevel": 10,
+    "description": "Immediately restores 10 (+10 Per Level) MP if there is not enough MP. Cooldown: 60 seconds",
+    "level": [50, 150]
+  },
+  "Final Resistance": {
+    "maxLevel": 5,
+    "description": "If you get knocked out last in the party, you will squeeze out every last bit of your strength to quickly revive for [5 + Registlet Level] seconds before becoming unable to battle again.\nFirst Aid, Struggle, Revive Droplets Unavailable",
+    "level": [50, 170]
+  },
+  "Elemental Trigger Slash": {
+    "maxLevel": 1,
+    "description": "Converts the element of \"Trigger Slash\" from fire to that of the weapon equipped",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Spiral Air Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of \"Spiral Air\" by 2% per Registlet Level",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Arrow Rain Enhancer": {
+    "maxLevel": 2,
+    "description": "An additional attack is added to the skill \"Arrow Rain\" per Registlet Level",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Paralysis Shot Extender": {
+    "maxLevel": 10,
+    "description": "Extends the duration of buff from the skill \"Paralysis Shot\" by 1 second per Registlet Level.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Magic: Lances Catalyst": {
+    "maxLevel": 5,
+    "description": "Shortens the interval between shots of the skill \"Magic: Lances\" by 0.1 seconds per Registlet Level",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Magic: Blast Catalyst": {
+    "maxLevel": 5,
+    "description": "Shortens the time to cast the skill \"Magic: Blast\" by 0.2 seconds per Registlet Level",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Power Wave Modifier": {
+    "maxLevel": 10,
+    "description": "Modifies the effect of \"Power Wave\" so that it raises normal attack power by [⌈(Registlet Level + Power Wave Level) × 0.5⌉]% instead of extending the range.\nThe increment depends on the skill level.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Shell Break Enhancer": {
+    "maxLevel": 5,
+    "description": "Raises the chance to inflict Armor Break with the skill \"Shell Break\" by 5% per Registlet Level.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Earthbind Enhancer": {
+    "maxLevel": 10,
+    "description": "Raises the power of \"Earthbind\" by 5% per Registlet Level if used with knuckles.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Spinning Slash Compress": {
+    "maxLevel": 10,
+    "description": "Reduces the range of \"Spinning Slash\" and removes the knock back effect, but raises its power by 5% per Registlet Level.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Critical Charging Slash": {
+    "maxLevel": 10,
+    "description": "Lowers the power of \"Charging Slash\" by [110 - (10 × Registlet Level)]% and guarantees a critical hit.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Dragon Tail Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of the second hit of \"Dragon Tail\" by 5% per Registlet Level.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Mega War Cry of Struggle": {
+    "maxLevel": 10,
+    "description": "Increases the aggro generated by the skill \"War Cry of Struggle\" by 300 per Registlet Level.",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Static Triple Thrust": {
+    "maxLevel": 1,
+    "description": "You will remain in the same spot when using the skill \"Triple Thrust\".",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Magadachi Amulet": {
+    "maxLevel": 6,
+    "description": "Raises magic damage reduction by the skill \"Magadachi\" by 5% per Registlet Level",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Meikyo Shisui Preserver": {
+    "maxLevel": 1,
+    "description": "The effect from \"Meikyo Shisui\" remains when using a skill",
+    "level": [70, 90, 110, 130, 150]
+  },
+  "Steady Stance": {
+    "maxLevel": 10,
+    "description": "Reduces damage taken while afflicted with Stop by 3% per Registlet Level if you stand still",
+    "level": [70, 90]
+  },
+  "Shared Destiny": {
+    "maxLevel": 10,
+    "description": "Each party member excluding you will raise ATK and MATK by 1%, but [110 - (10 × Registlet Level)]% of HP will be lost whenever a member gets knocked out.\nThis HP loss could knock player out",
+    "level": [70, 190]
+  },
+  "Forty Winks": {
+    "maxLevel": 5,
+    "description": "Shortens Sleep duration by 10% per Registlet Level",
+    "level": [90]
+  },
+  "Tanker's Pet": {
+    "maxLevel": 10,
+    "description": "Lowers the damage received by pet by 3% per Registlet Level, but greatly increases the damage received by its owner",
+    "level": [90]
+  },
+  "Last Hero": {
+    "maxLevel": 10,
+    "description": "Restores [10 + Registlet Level]% of your HP and MP per knocked out party member when you are the only one left.\nCooldown: 300 seconds",
+    "level": [90, 190]
+  },
+  "Monophobia": {
+    "maxLevel": 5,
+    "description": "Restores 100 HP per 10 seconds when near a party member, but when not, 100 HP will be lost. Range is [3 + Registlet Level] meters.\nThis HP loss won't knock player out",
+    "level": [90, 170]
+  },
+  "Pyrexia": {
+    "maxLevel": 20,
+    "description": "The chance of having Freeze status removed if you do a normal attack while frozen increases by 5% per Registlet Level",
+    "level": [110]
+  },
+  "Impetus": {
+    "maxLevel": 10,
+    "description": "Reduces movement speed decline due to Slow by 5% per Registlet Level",
+    "level": [110, 130]
+  },
+  "Silent Recharge": {
+    "maxLevel": 20,
+    "description": "Increase amount of MP recovered by 5% per Registlet Level if \"MP Charge\" is used while afflicted with Silence",
+    "level": [110]
+  },
+  "Attacker's Pet": {
+    "maxLevel": 10,
+    "description": "Raises the damage dealt by pet by 3% per Registlet Level, but greatly decreases its owner's.",
+    "level": [110]
+  },
+  "Mana Thrash": {
+    "maxLevel": 1,
+    "description": "Raises normal attack power in exchange for Attack MP Recovery.\nPower increases more with higher Attack MP Recovery",
+    "level": [110]
+  },
+  "Parsimony": {
+    "maxLevel": 10,
+    "description": "Instead of consuming a triggered auto-item, the item cooldown is doubled. \nCooldown: [40 - Registlet Level] seconds",
+    "level": [110]
+  },
+  "Emergency Repair": {
+    "maxLevel": 20,
+    "description": "There is a [5 × Registlet Level]% chance of having Armor Break status removed when the damage taken increases because of it",
+    "level": [130]
+  },
+  "Mana Defuser": {
+    "maxLevel": 1,
+    "description": "Immediately restores 100 MP if you survive a Mana Explosion",
+    "level": [130, 150]
+  },
+  "Coffee Break": {
+    "maxLevel": 10,
+    "description": "Restores 10% of your HP when you defeat a monster. \nCooldown: [30 - Registlet Level] seconds.",
+    "level": [130]
+  },
+  "Eagle Eye": {
+    "maxLevel": 10,
+    "description": "Reduces damage taken from behind (opposite camera direction) by 1% per Registlet Level. The damage will be further reduced when taken from directly behind",
+    "level": [130]
+  },
+  "Savior": {
+    "maxLevel": 1,
+    "description": "Grants a 10-second invincibility if you revive when all of your party members get knocked out",
+    "level": [130]
+  },
+  "Remedial Rampage": {
+    "maxLevel": 10,
+    "description": "Removes the finishing attack of the skill \"Rampage\" and restores 50 HP per Registlet Level",
+    "level": [150, 170, 190, 210]
+  },
+  "Sword Tempest Extender": {
+    "maxLevel": 1,
+    "description": "Adds 1 hit to the skill \"Sword Tempest\"",
+    "level": [150, 170, 190, 210]
+  },
+  "Smoke Dust Extender": {
+    "maxLevel": 10,
+    "description": "Extends the duration of buff from the skill \"Smoke Dust\" by 1 second per Registlet Level.",
+    "level": [150, 170, 190, 210]
+  },
+  "Piercing Heavy Smash": {
+    "maxLevel": 10,
+    "description": "Adds [5 × Registlet Level]% Physical Pierce to the skill \"Heavy Smash\" if used with knuckles.",
+    "level": [150, 170, 190, 210]
+  },
+  "Phantom Slash Enhancer": {
+    "maxLevel": 20,
+    "description": "Raises the power of \"Phantom Slash\" by 5% per Registlet Level.",
+    "level": [150, 170, 190, 210]
+  },
+  "Focus Dive Impact": {
+    "maxLevel": 5,
+    "description": "Turns the skill \"Dive Impact\" into an attack that pierces through a single target. Resistance to Dazzled is shortened by 2 seconds per Registlet Level.",
+    "level": [150, 170, 190, 210]
+  },
+  "Pursuit Relief": {
+    "maxLevel": 20,
+    "description": "Reduces damage taken by 1% per Registlet Level when you can't move while afflicted with Flinch, Tumble, or Stun.",
+    "level": [150]
+  },
+  "Burning Spirit": {
+    "maxLevel": 10,
+    "description": "Restores MP as much as [5 × Registlet Level]% of your Attack MP Recovery when taking damage inflicted by Ignite.",
+    "level": [150]
+  },
+  "Bloody Warrior": {
+    "maxLevel": 20,
+    "description": "Raises normal attack power and Attack MP Recovery by 5% per Registlet Level while afflicted with Bleed.",
+    "level": [150]
+  },
+  "Monster Hunter": {
+    "maxLevel": 10,
+    "description": "Restores 100 MP when you defeat a monster.\nCooldown: [30 - Registlet Level] seconds.",
+    "level": [150]
+  },
+  "Panic": {
+    "maxLevel": 10,
+    "description": "Restores [10 × Registlet Level] MP every 3 seconds, but all MP will be lost if you get aggro and this Registlet will be suspended for 30 seconds.",
+    "level": [150]
+  },
+  "Transfer": {
+    "maxLevel": 10,
+    "description": "Lowers MaxMP by [1100 - (100 × Registlet Level)], but when you are knocked out, the remaining MP will be shared among your party members.\nPlayers whose MP gets restored by this effect cannot enjoy the same effect for 180 seconds.",
+    "level": [150]
+  },
+  "Dominant War Cry": {
+    "maxLevel": 1,
+    "description": "Activation of \"War Cry\" will not be interrupted by Fear.",
+    "level": [170, 190, 210]
+  },
+  "Berserk Control": {
+    "maxLevel": 1,
+    "description": "For each level of \"Berserk\", 10% chance to prevent \"Rampage\" from being cancelled.",
+    "level": [170, 190, 210]
+  },
+  "Decoy Shot Compress": {
+    "maxLevel": 10,
+    "description": "Halves the duration of \"Decoy Shot\" but increases the power by 10% per Registlet Level.",
+    "level": [170, 190, 210]
+  },
+  "Frugal Shield Bash": {
+    "maxLevel": 10,
+    "description": "Restores [10 × Registlet Level] MP when \"Shield Bash\" inflicts [Stun].",
+    "level": [170]
+  },
+  "Extra Recovery": {
+    "maxLevel": 5,
+    "description": "Adds a HP recovery effect to the skill \"Recovery\". The amount of HP restored is [10 × Registlet Level]% of the HP recovered by the Mini Heal learned",
+    "level": [170, 190, 210]
+  },
+  "Frugal Heal": {
+    "maxLevel": 1,
+    "description": "Reduces the MP Cost of the skill \"Heal\" by 100",
+    "level": [170, 190, 210]
+  },
+  "Extreme Whack": {
+    "maxLevel": 5,
+    "description": "Increases the activation rate of \"Whack\" by 1% per Registlet Level",
+    "level": [170, 190, 210]
+  },
+  "Extreme Concentrate": {
+    "maxLevel": 5,
+    "description": "Increases the activation rate of \"Concentrate\" by 1% per Registlet Level",
+    "level": [170, 190, 210]
+  },
+  "Secret Chase ATK Boost": {
+    "maxLevel": 1,
+    "description": "Increases the activation rate of additional attack of \"Secret Chase Attack\" by 1% per level of the skill acquired.",
+    "level": [170, 190, 210]
+  },
+  "Power Resonance": {
+    "maxLevel": 9,
+    "description": "\"Resonance\" will only enhance stats that affect firepower, but the enhancement is reduced by [95 - (5 × Registlet Level)]%.",
+    "level": [170]
+  },
+  "Universal Ether Flare": {
+    "maxLevel": 1,
+    "description": "\"Ether Flare\" will recover Attack MP even if the element is not the target's weakness.",
+    "level": [170, 190, 210]
+  },
+  "Bloody Bite Enhancer": {
+    "maxLevel": 10,
+    "description": "Raises the power of \"Bloody Bite\" by 10% per Registlet Level",
+    "level": [170, 190, 210]
+  },
+  "Full Power Qi Charge": {
+    "maxLevel": 10,
+    "description": "When \"Qi Charge\" gives no effect, qi will increase by [10 × Registlet Level]% if the skill is activated using 2000 MP",
+    "level": [170]
+  },
+  "Single Meteor Strike": {
+    "maxLevel": 1,
+    "description": "Reduces the number of meteorites dropped from \"Meteor Strike\" to 1, but the drop point will no longer be random. It will no longer inflict status ailments either",
+    "level": [170]
+  },
+  "Start Dash": {
+    "maxLevel": 5,
+    "description": "Normal attack has 0 second cooldown for [5 + Registlet Level] seconds when getting aggro from the target monster for the first time.\nCooldown: 60 seconds",
+    "level": [170]
+  },
+  "Secret Combo": {
+    "maxLevel": 10,
+    "description": "Reduces aggro by [Registlet Level]% per 1 combo. Better effect with longer combo",
+    "level": [170]
+  },
+  "Zero Stance": {
+    "maxLevel": 10,
+    "description": "Damage dealt with skill activated without using a combo is multiplied by [1 + (0.01 × Registlet Level)]. \nDoes not apply to some skills such as charge skills",
+    "level": [170]
+  },
+  "Express Assault Attack": {
+    "maxLevel": 10,
+    "description": "Removes [Knock Back] and [Slow] from \"Assault Attack\" and increases its power by 10% per Registlet Level",
+    "level": [190]
+  },
+  "Rage Sword Enhancer": {
+    "maxLevel": 10,
+    "description": "Raises the power of \"Rage Sword\" by 10% per Registlet Level. Aggro doubles if the target is hostile towards you.",
+    "level": [190]
+  },
+  "Mega Royal Heal": {
+    "maxLevel": 8,
+    "description": "The range of \"Royal Heal\" effect is increased by 1m per Registlet Level, but the amount of HP restores is halved",
+    "level": [190]
+  },
+  "Tricky Shadow Walk": {
+    "maxLevel": 1,
+    "description": "Additional attack of \"Shadow Walk\" will no longer cause proration",
+    "level": [190]
+  },
+  "Comrade Familia": {
+    "maxLevel": 1,
+    "description": "The chance of the familiar summoned with \"Familia\" fleeing is reduced by 1%. Movement becomes 1 second faster for Advanced Familiar",
+    "level": [190]
+  },
+  "Speed Resonance": {
+    "maxLevel": 9,
+    "description": "\"Resonance\" will only enhance stats that affect acceleration, but the enhancement is reduced by [95 - (5 × Registlet Level)]%.",
+    "level": [190]
+  },
+  "Short Performance": {
+    "maxLevel": 1,
+    "description": "Shortens the duration of dance skill effect by 5 seconds. \nDoes not apply to Spirited Dance",
+    "level": [190]
+  },
+  "Silent P. Defense": {
+    "maxLevel": 10,
+    "description": "Reduces the aggro generated when P. Defense is successful by [10 × Registlet Level]%",
+    "level": [210]
+  },
+  "Binding Strike Modifier": {
+    "maxLevel": 1,
+    "description": "Modifies \"Binding Strike\" so that it inflicts [Stun] to the target only and the [Stop] effect is removed",
+    "level": [210]
+  },
+  "Holy Light Retribution": {
+    "maxLevel": 10,
+    "description": "There is a 1% chance that Lv[Registlet Level] light element Magic: Finale will activate when \"Holy Light\" hits the target",
+    "level": [210]
+  },
+  "Assassin Stab Enhancer": {
+    "maxLevel": 10,
+    "description": "Raises the power of \"Assassin Stab\" by [Registlet Level]%. Furthermore, the accuracy is raised by [10 × Registlet Level]% if it is Back Stab",
+    "level": [210]
+  },
+  "Mana Crystal Catalyst": {
+    "maxLevel": 5,
+    "description": "Reduces the casting time of \"Mana Crystal\" by [10 × Registlet Level]%, but the amount of MP recovered gets reduced by 100",
+    "level": [210]
+  },
+  "Chancy Trap": {
+    "maxLevel": 1,
+    "description": "Enables a trap skill to be set at the target's feet, but if it activates immediately, you will also be affected",
+    "level": [210]
+  },
+  "Focus Demon Claw": {
+    "maxLevel": 1,
+    "description": "The power of \"Demon Claw\" is reduced by 100% but the skill will focus on attacking a single target",
+    "level": [210]
+  },
+  "Focus Resonance": {
+    "maxLevel": 9,
+    "description": "\"Resonance\" will only enhance stats that affect concentration and precision, but the enhancement is reduced by [95 - (5 × Registlet Level)]%.",
+    "level": [210]
+  },
+  "Heal Bank": {
+    "maxLevel": 10,
+    "description": "The amount of HP recovered by \"Mini Heal\" and \"Heal\" is halved.\nAccumulates up to [Registlet Level] stacks of buff every 3 sec. When using the skill to heal an ally, the buff is consumed instead of MP to activate it",
+    "level": [210]
+  },
+  "Guitarist": {
+    "maxLevel": 6,
+    "description": "Shortens the time for song effect to increase when used continuously by [Registlet Level] sec, but aggro and damage received while singing increase by 10%.\nDoes not apply to Fantasy Song",
+    "level": [210]
+  }
+}
