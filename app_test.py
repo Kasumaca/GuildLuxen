@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import has_permissions
 from discord import SyncWebhook
 from flask import Flask
-import aiohttp, io
+import aiohttp, io, asyncio
 
 from tools.dataIO import fileIO
 
