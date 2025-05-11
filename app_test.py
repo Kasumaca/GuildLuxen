@@ -17,10 +17,6 @@ app = Flask(__name__)
 def home():
     return "Bot is alive!"
 
-def run_web():
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-
 config_location = fileIO("config/config.json", "load") #LOAD JSON FILE
 infomation = fileIO("config/infomation.json", "load") #LOAD JSON FILE
 emojiReplace = fileIO("config/emoji_id.json", "load") #LOAD JSON FILE
@@ -472,12 +468,12 @@ def run_bot():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        loop.run_until_complete(bot.start(TOKEN))
+        loop.run_until_complete(bot.run(TOKEN))
     except Exception as e:
         print(f"Error starting bot: {e}")
 
 # ========== Main Start ==========
 if __name__ == '__main__':
-    threading.Thread(target=run_web, daemon=True).start()
-    threading.Thread(target=run_bot, daemon=True).start()
+    threading.Thread(target=run_bot).start()
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 
