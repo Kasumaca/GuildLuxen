@@ -1,8 +1,21 @@
-import sys, asyncio,aiohttp, io,math, os
+import sys, asyncio,aiohttp, io,math, os,threading
+from flask import Flask
 #from dotenv import load_dotenv, dotenv_values 
 
 from tools.dataIO import fileIO
 
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run_web():
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+
+# Start web server in a thread
+threading.Thread(target=run_web).start()
 #TRY TO IMPORT DISCORD.PY
 try:
     import discord
