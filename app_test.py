@@ -1,30 +1,24 @@
-import sys, asyncio,aiohttp, io,math, os,threading
+import sys
+import os
+import threading
+import discord
+from discord.ext import commands
+from discord import SyncWebhook
 from flask import Flask
-#from dotenv import load_dotenv, dotenv_values 
+import aiohttp, io
 
 from tools.dataIO import fileIO
 
+# --- Flask Web Server ---
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Bot is running!"
+    return "Bot is alive!"
 
 def run_web():
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
-# Start web server in a thread
-threading.Thread(target=run_web).start()
-#TRY TO IMPORT DISCORD.PY
-try:
-    import discord
-    from discord.ext import commands
-    from discord.ext.commands import has_permissions
-    from discord import SyncWebhook
-except ImportError:
-    print("Discord.py is not installed!")
-    sys.exit(5)
 
 config_location = fileIO("config/config.json", "load") #LOAD JSON FILE
 infomation = fileIO("config/infomation.json", "load") #LOAD JSON FILE
@@ -469,6 +463,20 @@ async def info(ctx, infotype=None):
 # loading variables from .env file
 #load_dotenv() 
 #bot.run(os.getenv("TOKEN")) #RUN BOT
-if __name__ == "__main__":
-    bot.run(os.environ.get("TOKEN")) #RUN BOT
+def run_bot():
+    TOKEN = os.environ.get("TOKEN")  # Use Render's Environment Variable
+    if not TOKEN:
+        print("Missing TOKEN in environment variables.")
+        return
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        loop.run_until_complete(bot.start(TOKEN))
+    except Exception as e:
+        print(f"Error starting bot: {e}")
+
+# ========== Main Start ==========
+if __name__ == '__main__':
+    threading.Thread(target=run_web, daemon=True).start()
+    threading.Thread(target=run_bot, daemon=True).start()
 
