@@ -54,12 +54,14 @@ conn = psycopg2.connect(DATABASE_URL)
 cursor = conn.cursor()
 
 def get_user_data(user_id):
-    cursor.execute("SELECT exp, level FROM user_levels WHERE user_id = %s", (user_id,))
+    cursor.execute("SELECT experience, level FROM user_levels WHERE user_id = %s", (user_id,))
     data = cursor.fetchone()
     if data:
         return data
     else:
-        cursor.execute("INSERT INTO user_levels (user_id) VALUES (%s)", (user_id,))
+        # Explicitly set initial experience and level
+        cursor.execute("INSERT INTO user_levels (user_id, experience, level) VALUES (%s, %s, %s)",
+                       (user_id, 0, 1))
         conn.commit()
         return (0, 1)
 def add_experience(user_id, exp_gain=1):
