@@ -70,12 +70,12 @@ def add_experience(user_id, exp_gain=1):
     if new_exp >= next_level_exp:
         new_exp -= next_level_exp
         level += 1
-        cursor.execute("UPDATE user_levels SET experience = %s, level = %s WHERE user_id = %s",
+        cursor.execute("UPDATE user_levels SET exp = %s, level = %s WHERE user_id = %s",
                        (new_exp, level, user_id))
         conn.commit()
         return level  # level-up happened
     else:
-        cursor.execute("UPDATE user_levels SET experience = %s WHERE user_id = %s", (new_exp, user_id))
+        cursor.execute("UPDATE user_levels SET exp = %s WHERE user_id = %s", (new_exp, user_id))
         conn.commit()
         return None  # no level-up
         
