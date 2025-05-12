@@ -2,12 +2,13 @@ import sys
 import os
 import threading
 import discord
+import psycopg2
+import aiohttp, io, asyncio
+
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from discord import SyncWebhook
 from flask import Flask
-import aiohttp, io, asyncio
-
 from tools.dataIO import fileIO
 
 # --- Flask Web Server ---
@@ -47,8 +48,37 @@ bot = commands.AutoShardedBot(intents=intents, shard_count = Shards, command_pre
 #DON'T WORRY ABOUT THIS
 bot.remove_command('help')
 
+DATABASE_URL = os.getenv("DATABASE_URL")
 
+conn = psycopg2.connect(DATABASE_URL)
+cursor = conn.cursor()
 
+def get_user_data(user_id):
+    cursor.execute("SELECT exp, level FROM user_levels WHERE user_id = %s", (user_id,))
+    data = cursor.fetchone()
+    if data:
+        return data
+    else:
+        cursor.execute("INSERT INTO user_levels (user_id) VALUES (%s)", (user_id,))
+        conn.commit()
+        return (0, 1)
+def add_experience(user_id, exp_gain=1):
+    exp, level = get_user_data(user_id)
+    new_exp = exp + exp_gain
+    next_level_exp = level * 100
+
+    if new_exp >= next_level_exp:
+        new_exp -= next_level_exp
+        level += 1
+        cursor.execute("UPDATE user_levels SET experience = %s, level = %s WHERE user_id = %s",
+                       (new_exp, level, user_id))
+        conn.commit()
+        return level  # level-up happened
+    else:
+        cursor.execute("UPDATE user_levels SET experience = %s WHERE user_id = %s", (new_exp, user_id))
+        conn.commit()
+        return None  # no level-up
+        
 @bot.event
 async def on_ready():
     #THIS RUN WHEN BOT START UP
@@ -61,6 +91,13 @@ async def on_command(command):
 @bot.event
 async def on_message(message):
     if message.author.id == bot.user.id or message.author.bot: return
+    user_id = message.author.id
+    level_up = add_experience(user_id)
+
+    if level_up:
+        await message.channel.send(f"🎉 {message.author.mention} leveled up to **Level {level_up}**!")
+
+    
     roomName = [room for room in globalChatID.keys()]
     for name in roomName:
         room = [channelID[0] for channelID in globalChatID[name] if len(channelID)!=0]
@@ -110,7 +147,10 @@ def replaceEmoji(text):
     for key in emojiReplace.keys():
         text = text.replace(key, emojiReplace[key])
     return text
-
+@bot.command()
+async def level(ctx):
+    exp, level = get_user_data(ctx.author.id)
+    await ctx.send(f"{ctx.author.mention}, you are level {level} with {exp} XP.")
 def get_help_message(client, message):
     helpMessage = f"""**My Current Prefix is: `{get_prefix(bot, message)}` \n1. {get_prefix(bot, message)}info [event, lvling, foodbuff, mats]
 2. {get_prefix(bot, message)}regislet all/Regislet Name
