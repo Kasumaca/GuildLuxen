@@ -1,6 +1,6 @@
 import psycopg2, os
 
-DATABASE_URL = "postgresql://postgres:QflGgbOuZzAVZhZqQvgaSiRXIdQvzLGB@shortline.proxy.rlwy.net:26783/railway"#os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 def get_connection():
     return psycopg2.connect(DATABASE_URL)
