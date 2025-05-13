@@ -141,32 +141,26 @@ async def on_message(message):
     if message.reference:
         try:
             replyMsg = await message.channel.fetch_message(message.reference.message_id)
-
+            
             reply_embed = discord.Embed(color=discord.Color.blue())
 
-            # Check if reply content is a direct image URL
-            image_extensions = [".png", ".jpg", ".jpeg", ".gif", ".webp"]
-            is_image_url = any(replyMsg.content.lower().endswith(ext) for ext in image_extensions)
+            # Add reply message content if exists
+            if replyMsg.content:
+                reply_embed.description = replyMsg.content
 
-            if is_image_url:
-                reply_embed.set_image(url=replyMsg.content.strip())
-            elif replyMsg.content:
-                reply_embed.description = replyMsg.content.strip()
-
-            # If the replied-to message has attachments (images), use the first image
+            # Add image from reply if it contains a valid image URL or attachment
             if replyMsg.attachments:
+                # Use first attachment if it's an image
                 for att in replyMsg.attachments:
-                    if any(att.filename.lower().endswith(ext) for ext in image_extensions):
+                    if any(att.filename.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".gif", ".webp"]):
                         reply_embed.set_image(url=att.url)
                         break
 
-            reply_embed.set_author(
-                name=replyMsg.author.display_name,
-                icon_url=replyMsg.author.avatar.url if replyMsg.author.avatar else discord.Embed.Empty
-            )
+            # Set reply author
+            reply_embed.set_author(name=replyMsg.author.display_name, icon_url=replyMsg.author.avatar.url if replyMsg.author.avatar else discord.Embed.Empty)
 
         except Exception as e:
-            print(f"[Reply Embed Error] {e}")
+            print(f"[Reply Embed Error] Failed to create reply embed: {e}")
             reply_embed = None
 
 
