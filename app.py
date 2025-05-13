@@ -4,6 +4,7 @@ import threading
 import discord
 import psycopg2
 import aiohttp, io, asyncio, re
+from io import BytesIO
 
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -160,7 +161,7 @@ async def on_message(message):
                     "username": f"{message.author.global_name or message.author.name} || {guild.name}",
                     "avatar_url": str(message.author.avatar) if message.author.avatar else None,
                     "embeds": [],
-                    "files": [],
+                    "files": [],  # Ensure files list is initialized
                     "content": message.content,  # Start with original content
                 }
 
@@ -187,10 +188,15 @@ async def on_message(message):
                         img_embed.set_image(url=url)
                         send_kwargs["embeds"].append(img_embed)
 
+                # Append the fileBytes if there are any attachments
+                if fileBytes:
+                    send_kwargs["files"] = [discord.File(BytesIO(file[0]), file[1]) for file in fileBytes]
+
                 # Send the message via webhook
                 await webhook.send(**send_kwargs)
 
             except Exception as e:
+                print(f"[Webhook Error] Channel {channel_id} failed: {e}")
                 continue
     await bot.process_commands(message)
 
