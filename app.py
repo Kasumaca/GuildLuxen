@@ -137,31 +137,45 @@ async def on_message(message):
         fileBytes = []
 
     # Prepare reply embed
+    def replace_custom_emojis(text):
+        pattern = r'<(a?):(\w+):(\d+)>'
+        return re.sub(pattern, lambda m: f"https://cdn.discordapp.com/emojis/{m.group(3)}.{'gif' if m.group(1) == 'a' else 'png'}", text)
+
     reply_embed = None
     if message.reference:
         try:
             replyMsg = await message.channel.fetch_message(message.reference.message_id)
-            
+
             reply_embed = discord.Embed(color=discord.Color.blue())
+            reply_content = replyMsg.content.strip()
 
-            # Add reply message content if exists
-            if replyMsg.content:
-                reply_embed.description = replyMsg.content
+            # Convert emojis in content to image URLs
+            reply_content = replace_custom_emojis(reply_content)
 
-            # Add image from reply if it contains a valid image URL or attachment
+            image_extensions = [".png", ".jpg", ".jpeg", ".gif", ".webp"]
+            is_image_url = any(reply_content.lower().endswith(ext) for ext in image_extensions)
+
+            if is_image_url:
+                reply_embed.set_image(url=reply_content)
+            elif reply_content:
+                reply_embed.description = reply_content
+
+            # Fallback: check for attachments with image files
             if replyMsg.attachments:
-                # Use first attachment if it's an image
                 for att in replyMsg.attachments:
-                    if any(att.filename.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".gif", ".webp"]):
+                    if any(att.filename.lower().endswith(ext) for ext in image_extensions):
                         reply_embed.set_image(url=att.url)
                         break
 
-            # Set reply author
-            reply_embed.set_author(name=replyMsg.author.display_name, icon_url=replyMsg.author.avatar.url if replyMsg.author.avatar else discord.Embed.Empty)
+            reply_embed.set_author(
+                name=replyMsg.author.display_name,
+                icon_url=replyMsg.author.avatar.url if replyMsg.author.avatar else discord.Embed.Empty
+            )
 
         except Exception as e:
-            print(f"[Reply Embed Error] Failed to create reply embed: {e}")
+            print(f"[Reply Embed Error] {e}")
             reply_embed = None
+
 
 
     # Forward message to other linked channels
