@@ -137,14 +137,31 @@ async def on_message(message):
         fileBytes = []
 
     # Prepare reply embed
-    embed = []
+    reply_embed = None
     if message.reference:
         try:
             replyMsg = await message.channel.fetch_message(message.reference.message_id)
-            embed = discord.Embed(description=replyMsg.content, color=discord.Color.blue())
-            embed.set_author(name=replyMsg.author.name, icon_url=replyMsg.author.avatar)
-        except:
-            pass
+            
+            reply_embed = discord.Embed(color=discord.Color.blue())
+
+            # Add reply message content if exists
+            if replyMsg.content:
+                reply_embed.description = replyMsg.content
+
+            # Add image from reply if it contains a valid image URL or attachment
+            if replyMsg.attachments:
+                # Use first attachment if it's an image
+                for att in replyMsg.attachments:
+                    if any(att.filename.lower().endswith(ext) for ext in [".png", ".jpg", ".jpeg", ".gif", ".webp"]):
+                        reply_embed.set_image(url=att.url)
+                        break
+
+            # Set reply author
+            reply_embed.set_author(name=replyMsg.author.display_name, icon_url=replyMsg.author.avatar.url if replyMsg.author.avatar else discord.Embed.Empty)
+
+        except Exception as e:
+            reply_embed = None
+
 
     # Forward message to other linked channels
     async with aiohttp.ClientSession() as session:
@@ -192,11 +209,12 @@ async def on_message(message):
                 if fileBytes:
                     send_kwargs["files"] = [discord.File(BytesIO(file[0]), file[1]) for file in fileBytes]
 
+                if reply_embed:
+                    send_kwargs["embeds"].append(reply_embed)
                 # Send the message via webhook
                 await webhook.send(**send_kwargs)
 
             except Exception as e:
-                print(f"[Webhook Error] Channel {channel_id} failed: {e}")
                 continue
     await bot.process_commands(message)
 
