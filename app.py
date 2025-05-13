@@ -179,13 +179,9 @@ async def on_message(message):
                 # Update content with replaced emoji URLs
                 send_kwargs["content"] = replaced_content
 
-                # Debug: Check the content to be sent
-                print(f"Final content to send: {send_kwargs['content']}")
-
                 # Handle extracting image URLs
                 img_urls = extract_image_urls(replaced_content)
                 if img_urls:
-                    print(f"Extracted image URLs: {img_urls}")
                     for url in img_urls[:3]:  # Limit number of embeds to 3
                         img_embed = discord.Embed(color=discord.Color.blurple())
                         img_embed.set_image(url=url)
@@ -195,7 +191,6 @@ async def on_message(message):
                 await webhook.send(**send_kwargs)
 
             except Exception as e:
-                print(f"[Webhook Error] Channel {channel_id} failed: {e}")
                 continue
     await bot.process_commands(message)
 
