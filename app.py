@@ -7,25 +7,13 @@ import aiohttp, io, asyncio
 
 from discord.ext import commands
 from discord.ext.commands import has_permissions
-<<<<<<< HEAD:app_test.py
-from discord import SyncWebhook
-from flask import Flask
-from tools.dataIO import fileIO
-
-# --- Flask Web Server ---
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Bot is alive!"
-=======
 from discord import Webhook
 from threading import Thread
 from flask import Flask
 from tools.dataIO import fileIO
 from db import create_room, list_rooms, room_exists, add_channel_to_room, get_connected_webhooks
 from keep_alive import keep_alive
->>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
+
 
 config_location = fileIO("config/config.json", "load") #LOAD JSON FILE
 infomation = fileIO("config/infomation.json", "load") #LOAD JSON FILE
@@ -56,40 +44,6 @@ bot = commands.AutoShardedBot(intents=intents, shard_count = Shards, command_pre
 #DON'T WORRY ABOUT THIS
 bot.remove_command('help')
 
-<<<<<<< HEAD:app_test.py
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-conn = psycopg2.connect(DATABASE_URL)
-cursor = conn.cursor()
-
-def get_user_data(user_id):
-    cursor.execute("SELECT exp, level FROM user_levels WHERE user_id = %s", (user_id,))
-    data = cursor.fetchone()
-    if data:
-        return data
-    else:
-        # Explicitly set initial experience and level
-        cursor.execute("INSERT INTO user_levels (user_id, exp, level) VALUES (%s, %s, %s)",
-                       (user_id, 0, 1))
-        conn.commit()
-        return (0, 1)
-def add_experience(user_id, exp_gain=1):
-    exp, level = get_user_data(user_id)
-    new_exp = exp + exp_gain
-    next_level_exp = level * 100
-
-    if new_exp >= next_level_exp:
-        new_exp -= next_level_exp
-        level += 1
-        cursor.execute("UPDATE user_levels SET exp = %s, level = %s WHERE user_id = %s",
-                       (new_exp, level, user_id))
-        conn.commit()
-        return level  # level-up happened
-    else:
-        cursor.execute("UPDATE user_levels SET exp = %s WHERE user_id = %s", (new_exp, user_id))
-        conn.commit()
-        return None  # no level-up
-=======
 #def get_user_data(user_id):
 #    cursor.execute("SELECT exp, level FROM user_levels WHERE user_id = %s", (user_id,))
 #    data = cursor.fetchone()
@@ -117,7 +71,6 @@ def add_experience(user_id, exp_gain=1):
 #        cursor.execute("UPDATE user_levels SET exp = %s WHERE user_id = %s", (new_exp, user_id))
 #        conn.commit()
 #        return None  # no level-up
->>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
         
 @bot.event
 async def on_ready():
@@ -128,67 +81,16 @@ async def on_ready():
 async def on_command(command):
     ...
 
-from discord import Webhook
-import aiohttp
-import io
+
 
 @bot.event
 async def on_message(message):
-<<<<<<< HEAD:app_test.py
-    if message.author.id == bot.user.id or message.author.bot: return
-    user_id = message.author.id
-    level_up = add_experience(user_id)
-
-    if level_up:
-        await message.channel.send(f"🎉 {message.author.mention} leveled up to **Level {level_up}**!")
-
-    
-    roomName = [room for room in globalChatID.keys()]
-    for name in roomName:
-        room = [channelID[0] for channelID in globalChatID[name] if len(channelID)!=0]
-        if str(message.channel.id) in room and not message.webhook_id:
-            fileMsg = []
-            try:
-                if message.attachments:
-                    async with aiohttp.ClientSession() as session: # creates session
-                        for eachFile in message.attachments:
-                            async with session.get(eachFile.url) as resp: # gets image from url
-                                img = await resp.read() # reads image from response
-                                with io.BytesIO(img) as file: # converts to file-like object
-                                    fileMsg.append(discord.File(file, eachFile.filename))
-            except:
-                fileMsg = []
-            em = None
-            if message.reference:
-                replyMsg = await message.channel.fetch_message(message.reference.message_id)
-                em = discord.Embed(description=replyMsg.content, color=discord.Color.blue())
-                em.set_author(name=f"{replyMsg.author.name}", icon_url=replyMsg.author.avatar)
-            for roomK in globalChatID.keys():
-                if str(message.channel.id) not in [channel[0] for channel in globalChatID[roomK]]: continue
-                try:
-                    for i in range(len(globalChatID[roomK])):
-                        try:
-                            if str(globalChatID[roomK][i][0]) == str(message.channel.id): continue
-                            #channel = await bot.fetch_channel(globalChatID[guildID])
-                            guild = await bot.fetch_guild(message.guild.id)
-                            webhook = SyncWebhook.from_url(globalChatID[roomK][i][1])
-                            if fileMsg:
-                                await webhook.send(content=f"{message.content}",username= f"{message.author.global_name} || {guild.name}", avatar_url=message.author.avatar, files=fileMsg, embed=em)
-                            else:
-                                await webhook.send(content=f"{message.content}",username= f"{message.author.global_name} || {guild.name}", avatar_url=message.author.avatar, embed=em)
-                        except:
-                            continue
-                except:
-                    continue
-    else:
-=======
     if message.author.bot or message.webhook_id:
         await bot.process_commands(message)
         return
 
     connected_channels = get_connected_webhooks(message.channel.id)
     if not connected_channels:
->>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
         if "<@589793989922783252>" in message.content and "help" in message.content.lower():
             messageDes = get_help_message(bot, message)
             em = discord.Embed(title="**Commands List**", description=messageDes, color=discord.Color.blue())
@@ -256,17 +158,12 @@ def replaceEmoji(text):
     for key in emojiReplace.keys():
         text = text.replace(key, emojiReplace[key])
     return text
-<<<<<<< HEAD:app_test.py
-@bot.command()
-async def level(ctx):
-    exp, level = get_user_data(ctx.author.id)
-    await ctx.send(f"{ctx.author.mention}, you are level {level} with {exp} XP.")
-=======
+
 #@bot.command()
 #async def level(ctx):
 #    exp, level = get_user_data(ctx.author.id)
 #    await ctx.send(f"{ctx.author.mention}, you are level {level} with {exp} XP.")
->>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
+
 def get_help_message(client, message):
     helpMessage = f"""**My Current Prefix is: `{get_prefix(bot, message)}` \n1. {get_prefix(bot, message)}info [event, lvling, foodbuff, mats]
 2. {get_prefix(bot, message)}regislet all/Regislet Name
@@ -599,29 +496,6 @@ async def info(ctx, infotype=None):
         await msg.delete()
     except asyncio.TimeoutError:  #<---- If the user doesn't respond
         pass
-<<<<<<< HEAD:app_test.py
-# loading variables from .env file
-#load_dotenv() 
-#bot.run(os.getenv("TOKEN")) #RUN BOT
-def run_bot():
-    TOKEN = os.environ.get("TOKEN")  # Use Render's Environment Variable
-    if not TOKEN:
-        print("Missing TOKEN in environment variables.")
-        return
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    try:
-        loop.run_until_complete(bot.run(TOKEN))
-    except Exception as e:
-        print(f"Error starting bot: {e}")
-
-# ========== Main Start ==========
-if __name__ == '__main__':
-    threading.Thread(target=run_bot).start()
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
-
-=======
-
 def run_bot():
     TOKEN = os.environ.get("TOKEN")  # or hardcode temporarily for testing
 
@@ -642,5 +516,3 @@ if __name__ == '__main__':
 
     # Run the bot in the main thread (important!)
     run_bot()
-    
->>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
