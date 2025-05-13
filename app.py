@@ -7,6 +7,7 @@ import aiohttp, io, asyncio
 
 from discord.ext import commands
 from discord.ext.commands import has_permissions
+<<<<<<< HEAD:app_test.py
 from discord import SyncWebhook
 from flask import Flask
 from tools.dataIO import fileIO
@@ -17,21 +18,28 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     return "Bot is alive!"
+=======
+from discord import Webhook
+from threading import Thread
+from flask import Flask
+from tools.dataIO import fileIO
+from db import create_room, list_rooms, room_exists, add_channel_to_room, get_connected_webhooks
+from keep_alive import keep_alive
+>>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
 
 config_location = fileIO("config/config.json", "load") #LOAD JSON FILE
 infomation = fileIO("config/infomation.json", "load") #LOAD JSON FILE
 emojiReplace = fileIO("config/emoji_id.json", "load") #LOAD JSON FILE
 regisletInfo = fileIO("config/regislet.json", "load") #LOAD JSON FILE
-stattingDB = fileIO("config/stattingDB.json", "load") 
-globalChatID = fileIO("config/global_chat_guild_id.json", "load") #LOAD JSON FILE
+stattingDB = fileIO("config/stattingDB.json", "load")
 ignoredID = fileIO("config/ignoreID.json", "load")
 
 Shards = config_location["Shards"] #GET SHARD/VER FROM JSON FILE
 def get_prefix(client, message): ##first we define get_prefix
-    prefixes = fileIO("config/prefixes.json", "load")
-    prefix = prefixes.get(str(message.guild.id), None)
-    if prefix == None:
-        prefix = "Luxen"
+    #prefixes = fileIO("config/prefixes.json", "load")
+    prefix = None #prefixes.get(str(message.guild.id), None)
+    if prefix is None:
+        prefix = "Miri"
         save_prefix(prefix, message)
     return prefix
 
@@ -48,6 +56,7 @@ bot = commands.AutoShardedBot(intents=intents, shard_count = Shards, command_pre
 #DON'T WORRY ABOUT THIS
 bot.remove_command('help')
 
+<<<<<<< HEAD:app_test.py
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 conn = psycopg2.connect(DATABASE_URL)
@@ -80,6 +89,35 @@ def add_experience(user_id, exp_gain=1):
         cursor.execute("UPDATE user_levels SET exp = %s WHERE user_id = %s", (new_exp, user_id))
         conn.commit()
         return None  # no level-up
+=======
+#def get_user_data(user_id):
+#    cursor.execute("SELECT exp, level FROM user_levels WHERE user_id = %s", (user_id,))
+#    data = cursor.fetchone()
+#    if data:
+#        return data
+#    else:
+#        # Explicitly set initial experience and level
+#        cursor.execute("INSERT INTO user_levels (user_id, exp, level) VALUES (%s, %s, %s)",
+#                       (user_id, 0, 1))
+#        conn.commit()
+#        return (0, 1)
+#def add_experience(user_id, exp_gain=1):
+#    exp, level = get_user_data(user_id)
+#    new_exp = exp + exp_gain
+#    next_level_exp = level * 100
+#
+#    if new_exp >= next_level_exp:
+#        new_exp -= next_level_exp
+#        level += 1
+#        cursor.execute("UPDATE user_levels SET exp = %s, level = %s WHERE user_id = %s",
+#                       (new_exp, level, user_id))
+#        conn.commit()
+#        return level  # level-up happened
+#    else:
+#        cursor.execute("UPDATE user_levels SET exp = %s WHERE user_id = %s", (new_exp, user_id))
+#        conn.commit()
+#        return None  # no level-up
+>>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
         
 @bot.event
 async def on_ready():
@@ -90,8 +128,13 @@ async def on_ready():
 async def on_command(command):
     ...
 
+from discord import Webhook
+import aiohttp
+import io
+
 @bot.event
 async def on_message(message):
+<<<<<<< HEAD:app_test.py
     if message.author.id == bot.user.id or message.author.bot: return
     user_id = message.author.id
     level_up = add_experience(user_id)
@@ -138,28 +181,99 @@ async def on_message(message):
                 except:
                     continue
     else:
+=======
+    if message.author.bot or message.webhook_id:
+        await bot.process_commands(message)
+        return
+
+    connected_channels = get_connected_webhooks(message.channel.id)
+    if not connected_channels:
+>>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
         if "<@589793989922783252>" in message.content and "help" in message.content.lower():
             messageDes = get_help_message(bot, message)
-            em = discord.Embed(title=f"**Commands List**",description=messageDes, color=discord.Color.blue())
+            em = discord.Embed(title="**Commands List**", description=messageDes, color=discord.Color.blue())
             await message.channel.send(embed=em)
         await bot.process_commands(message)
-    
+        return
+
+    # Load attachments as raw bytes
+    fileBytes = []
+    try:
+        if message.attachments:
+            async with aiohttp.ClientSession() as session:
+                for eachFile in message.attachments:
+                    async with session.get(eachFile.url) as resp:
+                        img_bytes = await resp.read()
+                        fileBytes.append((img_bytes, eachFile.filename))
+    except:
+        fileBytes = []
+
+    # Prepare reply embed
+    embed = None
+    if message.reference:
+        try:
+            replyMsg = await message.channel.fetch_message(message.reference.message_id)
+            embed = discord.Embed(description=replyMsg.content, color=discord.Color.blue())
+            embed.set_author(name=replyMsg.author.name, icon_url=replyMsg.author.avatar)
+        except:
+            pass
+
+    # Forward message to other linked channels
+    async with aiohttp.ClientSession() as session:
+        for channel_id, webhook_url in connected_channels:
+            try:
+                if str(channel_id) == str(message.channel.id):
+                    continue  # Skip current channel
+
+                guild = await bot.fetch_guild(message.guild.id)
+                webhook = Webhook.from_url(webhook_url, session=session)
+
+                send_kwargs = {
+                    "content": message.content or None,
+                    "username": f"{message.author.global_name or message.author.name} || {guild.name}",
+                    "avatar_url": str(message.author.avatar) if message.author.avatar else None,
+                }
+
+                if fileBytes:
+                    send_kwargs["files"] = [
+                        discord.File(io.BytesIO(img), filename)
+                        for img, filename in fileBytes
+                    ]
+                if embed:
+                    send_kwargs["embed"] = embed
+
+                await webhook.send(**send_kwargs)
+
+            except:
+                continue
+
+    await bot.process_commands(message)
+
+
+
 
 def replaceEmoji(text):
     for key in emojiReplace.keys():
         text = text.replace(key, emojiReplace[key])
     return text
+<<<<<<< HEAD:app_test.py
 @bot.command()
 async def level(ctx):
     exp, level = get_user_data(ctx.author.id)
     await ctx.send(f"{ctx.author.mention}, you are level {level} with {exp} XP.")
+=======
+#@bot.command()
+#async def level(ctx):
+#    exp, level = get_user_data(ctx.author.id)
+#    await ctx.send(f"{ctx.author.mention}, you are level {level} with {exp} XP.")
+>>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
 def get_help_message(client, message):
     helpMessage = f"""**My Current Prefix is: `{get_prefix(bot, message)}` \n1. {get_prefix(bot, message)}info [event, lvling, foodbuff, mats]
 2. {get_prefix(bot, message)}regislet all/Regislet Name
 3. {get_prefix(bot, message)}prefix [Prefix You Want] (ADMIN ONLY)
-4. {get_prefix(bot, message)}list_linked_chat (ADMIN ONLY)
-5. {get_prefix(bot, message)}join_linked_chat #Channel [ROOM] (ADMIN ONLY)
-6. {get_prefix(bot, message)}create_linked_chat [RoomName] (ADMIN ONLY)
+4. {get_prefix(bot, message)}list (ADMIN ONLY)
+5. {get_prefix(bot, message)}join #Channel [ROOM] (ADMIN ONLY)
+6. {get_prefix(bot, message)}create [RoomName] (ADMIN ONLY)
     **"""
     return helpMessage
 class SecondEventDropdown(discord.ui.Select):
@@ -300,64 +414,50 @@ async def checkMember(ctx):
 async def ignore(ctx, *, id):
     print(id)
     #await ctx.channel.send(f"IGNORED <@{id}>")
-    
-@bot.command(administrator=True)
+@bot.command(administrator=True)    
 async def create(ctx, *, roomName=""):
-    if len(roomName) == 0: return
-    global globalChatID
-    globalID = fileIO("config/global_chat_guild_id.json", "load")
-    if roomName in globalID: 
-        await ctx.channel.send(f"{roomName} is already exists")
+    if not roomName:
+        await ctx.send("Please specify a room name.")
         return
-    globalID[roomName] = []
-    fileIO("config/global_chat_guild_id.json", "save", globalID)
-    globalChatID = fileIO("config/global_chat_guild_id.json", "load")
-    await ctx.channel.send(f"{roomName} has been created")
+
+    create_room(roomName)
+    await ctx.send(f"Room `{roomName}` created.")
 
 @bot.command(administrator=True)
 async def list(ctx):
-    global globalChatID
-    globalID = fileIO("config/global_chat_guild_id.json", "load")
-    text = ""
-    count = 1
-    for name in globalID.keys():
-        text = text + "**"+str(count)+". "+name+f" ({len(globalID[name])}/10)**\n\n"
-        count += 1
-    em = discord.Embed(title=f"List of all Linked Room",description=text, color=discord.Color.blue())
-    await ctx.channel.send(embed=em)
+    rooms = list_rooms()
+    if not rooms:
+        await ctx.send("No rooms found.")
+        return
+
+    desc = ""
+    for i, (name, count) in enumerate(rooms, 1):
+        desc += f"**{i}. {name} ({count}/10)**\n\n"
+
+    embed = discord.Embed(title="List of Linked Rooms", description=desc, color=discord.Color.blue())
+    await ctx.send(embed=embed)
 
 @bot.command(administrator=True)
 async def join(ctx, args="", *, room=""):
-    if len(args) == 0 or len(room) == 0: return
-    global globalChatID
-    globalID = fileIO("config/global_chat_guild_id.json", "load")
-    #globalID[str(ctx.guild.id)] = [args[2:-1], str(hook.url)]
-    roomName = [room for room in globalID.keys()]
-    if room not in roomName: return
-    found = False
-    newRoomValue = globalID[room]
-    for i in range(len(newRoomValue)):
-        if args[2:-1] in newRoomValue[i]:
-            newRoomValue[i] = [args[2:-1], str(hook.url)]
-            globalID[room] = newRoomValue
-            found = True
-    else:
-        if not found:
-            channel = await bot.fetch_channel(args[2:-1])
-            hook = await channel.create_webhook(name=f"{room}_chat_webhook")
-            newRoomValue.append([args[2:-1], str(hook.url)])
-            globalID[room] = newRoomValue
-        await ctx.channel.send(f"{args} connected to {room}")
+    if not args or not room:
+        await ctx.send(f"Usage: `{get_prefix(bot, ctx)}join #channel room_name`")
+        return
 
-    fileIO("config/global_chat_guild_id.json", "save", globalID)
-    globalChatID = fileIO("config/global_chat_guild_id.json", "load")  
-    #for roomName in globalChatID.keys():
-    #    if roomName != room: continue
-    #    for channel in globalChatID[roomName]:
-    #        if str(channel[0]) == str(ctx.channel.id): continue
-    #        channel = await bot.fetch_channel(globalChatID[roomName][0])
-    #        await channel.send(f":earth_asia: **{ctx.guild.name} CONNECTED TO {roomName}**")
+    try:
+        channel_id = args.strip()[2:-1]
+        room_id = room_exists(room)
 
+        if not room_id:
+            await ctx.send(f"Room `{room}` does not exist.")
+            return
+
+        channel = await bot.fetch_channel(channel_id)
+        webhook = await channel.create_webhook(name=f"{room}_webhook")
+
+        add_channel_to_room(room, channel_id, webhook.url)
+        await ctx.send(f"Channel {args} connected to `{room}`.")
+    except Exception as e:
+        await ctx.send(f"Error: {str(e)}")
 @bot.command()
 async def regislet(ctx, *, args="None"):
     #if not (await checkMember(ctx)): return
@@ -499,6 +599,7 @@ async def info(ctx, infotype=None):
         await msg.delete()
     except asyncio.TimeoutError:  #<---- If the user doesn't respond
         pass
+<<<<<<< HEAD:app_test.py
 # loading variables from .env file
 #load_dotenv() 
 #bot.run(os.getenv("TOKEN")) #RUN BOT
@@ -519,3 +620,27 @@ if __name__ == '__main__':
     threading.Thread(target=run_bot).start()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 
+=======
+
+def run_bot():
+    TOKEN = os.environ.get("TOKEN")  # or hardcode temporarily for testing
+
+    if not TOKEN:
+        print("Missing TOKEN in environment variables.")
+        return
+
+    try:
+        bot.run(TOKEN)
+    except Exception as e:
+        print(f"Error starting bot: {e}")
+
+
+# ========== Main Start ==========
+if __name__ == '__main__':
+    # Start the Flask keep-alive server in a thread
+    Thread(target=keep_alive).start()
+
+    # Run the bot in the main thread (important!)
+    run_bot()
+    
+>>>>>>> 16b3ee1 (Part 1 Postgres revamp):app.py
