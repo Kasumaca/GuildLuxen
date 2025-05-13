@@ -3,7 +3,7 @@ import os
 import threading
 import discord
 import psycopg2
-import aiohttp, io, asyncio
+import aiohttp, io, asyncio, re
 
 from discord.ext import commands
 from discord.ext.commands import has_permissions
@@ -35,7 +35,32 @@ def save_prefix(prefix, message):
     prefixes = fileIO("config/prefixes.json", "load")
     prefixes[str(message.guild.id)] = prefix
     fileIO("config/prefixes.json", "save", prefixes)
-    
+
+IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".gif", ".webp", ".webm", ".mp4"]
+FAKE_EMOJI_REGEX = r'\[:([^\]:]+):\]\((https?://[^\)]+)\)'
+
+def extract_image_urls(content: str):
+    return [
+        url for url in re.findall(r'https?://\S+', content)
+        if any(url.lower().endswith(ext) for ext in IMAGE_EXTENSIONS)
+    ]
+
+def replace_fake_emojis(text: str):
+    return re.sub(FAKE_EMOJI_REGEX, lambda m: f"[{m.group(1)}]({m.group(2)})", text)
+
+def replace_custom_emojis_with_image_url(content: str, guild_emojis: list):
+    emoji_pattern = r':([a-zA-Z0-9_]+):'
+    matches = re.findall(emoji_pattern, content)
+
+    for emoji_name in matches:
+        # Look for the custom emoji in the server's emojis
+        emoji = discord.utils.get(guild_emojis, name=emoji_name)
+        if emoji:
+            # Replace the emoji name with the emoji's image URL
+            emoji_url = f"https://cdn.discordapp.com/emojis/{emoji.id}.{'gif' if emoji.animated else 'png'}"
+            content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({emoji_url})")
+
+    return content
 #INIT UR BOT
 intents = discord.Intents.all()
 intents.message_content = True
@@ -111,7 +136,7 @@ async def on_message(message):
         fileBytes = []
 
     # Prepare reply embed
-    embed = None
+    embed = []
     if message.reference:
         try:
             replyMsg = await message.channel.fetch_message(message.reference.message_id)
@@ -125,34 +150,51 @@ async def on_message(message):
         for channel_id, webhook_url in connected_channels:
             try:
                 if str(channel_id) == str(message.channel.id):
-                    continue  # Skip current channel
-
+                    continue  # Skip the same channel
+                
                 guild = await bot.fetch_guild(message.guild.id)
-                webhook = Webhook.from_url(webhook_url, session=session)
-
+                webhook = discord.Webhook.from_url(webhook_url, session=session)
+                
+                # Prepare the webhook message dictionary
                 send_kwargs = {
-                    "content": message.content or None,
                     "username": f"{message.author.global_name or message.author.name} || {guild.name}",
                     "avatar_url": str(message.author.avatar) if message.author.avatar else None,
+                    "embeds": [],
+                    "files": [],
+                    "content": message.content,  # Start with original content
                 }
 
-                if fileBytes:
-                    send_kwargs["files"] = [
-                        discord.File(io.BytesIO(img), filename)
-                        for img, filename in fileBytes
-                    ]
-                if embed:
-                    send_kwargs["embed"] = embed
+                # Replace custom emoji tags with their image URLs in the content
+                replaced_content = message.content
+                #custom_emojis = re.findall(custom_emoji_pattern, message.content)
+                
+                #for animated, name, emoji_id in custom_emojis:
+                #    emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
+                #    emoji_tag = f"<:{name}:{emoji_id}>"
+                #    replaced_content = replaced_content.replace(emoji_tag, emoji_url, 1)
 
+                # Update content with replaced emoji URLs
+                send_kwargs["content"] = replaced_content
+
+                # Debug: Check the content to be sent
+                print(f"Final content to send: {send_kwargs['content']}")
+
+                # Handle extracting image URLs
+                img_urls = extract_image_urls(replaced_content)
+                if img_urls:
+                    print(f"Extracted image URLs: {img_urls}")
+                    for url in img_urls[:3]:  # Limit number of embeds to 3
+                        img_embed = discord.Embed(color=discord.Color.blurple())
+                        img_embed.set_image(url=url)
+                        send_kwargs["embeds"].append(img_embed)
+
+                # Send the message via webhook
                 await webhook.send(**send_kwargs)
 
-            except:
+            except Exception as e:
+                print(f"[Webhook Error] Channel {channel_id} failed: {e}")
                 continue
-
     await bot.process_commands(message)
-
-
-
 
 def replaceEmoji(text):
     for key in emojiReplace.keys():
