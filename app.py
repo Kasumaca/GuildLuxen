@@ -181,12 +181,12 @@ async def on_message(message):
                 send_kwargs["content"] = replaced_content
 
                 # Handle extracting image URLs
-                img_urls = extract_image_urls(replaced_content)
-                if img_urls:
-                    for url in img_urls[:3]:  # Limit number of embeds to 3
-                        img_embed = discord.Embed(color=discord.Color.blurple())
-                        img_embed.set_image(url=url)
-                        send_kwargs["embeds"].append(img_embed)
+                #img_urls = extract_image_urls(replaced_content)
+                #if img_urls:
+                #    for url in img_urls[:3]:  # Limit number of embeds to 3
+                #        img_embed = discord.Embed(color=discord.Color.blurple())
+                #        img_embed.set_image(url=url)
+                #        send_kwargs["embeds"].append(img_embed)
 
                 # Append the fileBytes if there are any attachments
                 if fileBytes:
