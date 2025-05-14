@@ -108,14 +108,33 @@ async def on_command(command):
     ...
 
 @bot.event
-async def on_member_update(before, after):
-    # Check if the nickname has changed
+async def on_member_update(before: discord.Member, after: discord.Member):
     if before.nick != after.nick:
-        # If the nickname was changed by someone else
-        if after.nick != before.nick:  # Check if the user changed their nickname
-            if after.nick != after.name:  # Avoid resetting to default if user didn't change it
-                # Revert the nickname to the original one
-                await after.edit(nick=before.nick)
+        await asyncio.sleep(1)  # Wait to ensure audit log is updated
+
+        guild = after.guild
+
+        try:
+            async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.member_update):
+                if entry.target.id == after.id:
+                    changer = entry.user
+
+                    # Skip revert if changed by the user themselves or allowed owner
+                    if changer.id != after.id and changer.id not in config_location["Owner"]:
+                        try:
+                            await after.edit(nick=before.nick, reason="Nickname reverted - not changed by user or approved staff.")
+                            pass
+                        except discord.Forbidden:
+                            pass
+                        except discord.HTTPException as e:
+                            pass
+                    else:
+                        pass
+                    break
+        except discord.Forbidden:
+            pass
+        except Exception as e:
+            pass
 
 @bot.event
 async def on_message(message):
