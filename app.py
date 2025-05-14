@@ -232,36 +232,40 @@ async def on_message(message):
             reply_embed = None
 
 
-        # Function to check if a message is purely emoji-based
+
+    # Function to check if a message is purely emoji-based
     def is_emoji_only_message(content: str):
-        # This regex matches any combination of :emoji_name: (custom emoji pattern)
+        """
+        Check if the message consists entirely of custom emoji tags (e.g., :emoji1: :emoji2:).
+        """
+        # Match only custom emoji tags like :emoji1: :emoji2:
         emoji_pattern = r':([a-zA-Z0-9_]+):'  # Match custom emojis like :emoji:
-        return bool(re.match(f"^({emoji_pattern})+$", content.strip()))  # Only emojis, no text
+        
+        # Remove whitespace and check if the content consists solely of emoji tags
+        content = content.strip()
+        
+        # If the content only contains emoji tags, return True
+        return bool(re.match(f"^({emoji_pattern})+$", content))
 
     # Function to replace custom emojis with image URLs
     def replace_custom_emojis_with_image_url(content: str, guild_emojis: list, is_emoji_only: bool):
+        """
+        Replace custom emoji tags with their image URLs, only if the message is an emoji-only message.
+        """
+        if not is_emoji_only:
+            return content  # Don't replace anything if it's not an emoji-only message
+        
         emoji_pattern = r':([a-zA-Z0-9_]+):'
         matches = re.findall(emoji_pattern, content)
 
         for emoji_name in matches:
             emoji = discord.utils.get(guild_emojis, name=emoji_name)
             if emoji:
-                # If it's an emoji-only message, replace it with an image URL
-                if is_emoji_only:
-                    content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({get_emoji_url(emoji_name)})")
-                # If it's not an emoji-only message, leave it as :emoji:
-                else:
-                    continue
-            else:
-                # If the emoji doesn't exist in the target server, replace with an image URL
-                content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({get_emoji_url(emoji_name)})")
+                # Replace custom emoji tags with their image URLs
+                emoji_url = f"https://cdn.discordapp.com/emojis/{emoji.id}.{'gif' if emoji.animated else 'png'}"
+                content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({emoji_url})")
         
         return content
-
-    # Helper function to get the emoji URL (for missing emojis)
-    def get_emoji_url(emoji_name):
-        # Return the URL for missing emojis (can adjust based on your needs)
-        return f"https://cdn.discordapp.com/emojis/{emoji_name}.png"  # Or .gif for animated emojis
 
     # Forward message to other linked channels
     async with aiohttp.ClientSession() as session:
@@ -282,10 +286,10 @@ async def on_message(message):
                     "content": message.content,  # Start with original content
                 }
 
-                # Check if the message only contains emojis
+                # Check if the message is emoji-only
                 is_emoji_only = is_emoji_only_message(message.content)
 
-                # Replace custom emojis in the content based on the message type
+                # Replace custom emojis in the content based on whether it's an emoji-only message
                 replaced_content = replace_custom_emojis_with_image_url(message.content, guild.emojis, is_emoji_only)
                 send_kwargs["content"] = replaced_content
 
@@ -301,7 +305,6 @@ async def on_message(message):
 
             except Exception as e:
                 continue
-
     await bot.process_commands(message)
 
 def replaceEmoji(text):
