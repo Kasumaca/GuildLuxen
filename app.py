@@ -133,7 +133,7 @@ async def on_member_update(before: discord.Member, after: discord.Member):
                     return
 
                 # Ignore if changed by user or approved staff
-                if changer.id != after.id and changer.id not in config_location["Owner"]:
+                if changer.id != after.id: #and changer.id not in config_location["Owner"]:
                     try:
                         await after.edit(nick=before.nick, reason="Nickname reverted - not changed by user or approved staff.")
                         print(f"Reverted nickname of {after.display_name} (changed by {changer.display_name})")
