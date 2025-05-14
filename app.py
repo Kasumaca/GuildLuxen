@@ -232,13 +232,13 @@ async def on_message(message):
             reply_embed = None
 
 
-    # Function to check if a message is purely emoji-based
+        # Function to check if a message is purely emoji-based
     def is_emoji_only_message(content: str):
-        # Check if the message consists only of emojis (custom or regular)
+        # This regex matches any combination of :emoji_name: (custom emoji pattern)
         emoji_pattern = r':([a-zA-Z0-9_]+):'  # Match custom emojis like :emoji:
         return bool(re.match(f"^({emoji_pattern})+$", content.strip()))  # Only emojis, no text
 
-    # Function to replace custom emojis with their image URLs
+    # Function to replace custom emojis with image URLs
     def replace_custom_emojis_with_image_url(content: str, guild_emojis: list, is_emoji_only: bool):
         emoji_pattern = r':([a-zA-Z0-9_]+):'
         matches = re.findall(emoji_pattern, content)
@@ -249,11 +249,11 @@ async def on_message(message):
                 # If it's an emoji-only message, replace it with an image URL
                 if is_emoji_only:
                     content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({get_emoji_url(emoji_name)})")
-                # Otherwise, leave it as :emoji:
+                # If it's not an emoji-only message, leave it as :emoji:
                 else:
                     continue
             else:
-                # If emoji is not found, replace with image URL
+                # If the emoji doesn't exist in the target server, replace with an image URL
                 content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({get_emoji_url(emoji_name)})")
         
         return content
@@ -285,7 +285,7 @@ async def on_message(message):
                 # Check if the message only contains emojis
                 is_emoji_only = is_emoji_only_message(message.content)
 
-                # Replace custom emojis in the content
+                # Replace custom emojis in the content based on the message type
                 replaced_content = replace_custom_emojis_with_image_url(message.content, guild.emojis, is_emoji_only)
                 send_kwargs["content"] = replaced_content
 
@@ -301,6 +301,7 @@ async def on_message(message):
 
             except Exception as e:
                 continue
+
     await bot.process_commands(message)
 
 def replaceEmoji(text):
