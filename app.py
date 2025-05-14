@@ -247,7 +247,7 @@ async def on_message(message):
         # If the content only contains emoji tags, return True
         return bool(re.match(f"^({emoji_pattern})+$", content))
 
-    # Function to replace custom emojis with image URLs
+    # Function to replace custom emojis with image URLs (for emoji-only messages)
     def replace_custom_emojis_with_image_url(content: str, guild_emojis: list, is_emoji_only: bool):
         """
         Replace custom emoji tags with their image URLs, only if the message is an emoji-only message.
@@ -258,10 +258,11 @@ async def on_message(message):
         emoji_pattern = r':([a-zA-Z0-9_]+):'
         matches = re.findall(emoji_pattern, content)
 
+        # Replace all found custom emoji tags with image URLs
         for emoji_name in matches:
             emoji = discord.utils.get(guild_emojis, name=emoji_name)
             if emoji:
-                # Replace custom emoji tags with their image URLs
+                # For emoji-only messages, replace the emoji with a markdown-style image link
                 emoji_url = f"https://cdn.discordapp.com/emojis/{emoji.id}.{'gif' if emoji.animated else 'png'}"
                 content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({emoji_url})")
         
