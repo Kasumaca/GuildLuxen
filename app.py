@@ -107,7 +107,15 @@ async def on_ready():
 async def on_command(command):
     ...
 
-
+@bot.event
+async def on_member_update(before, after):
+    # Check if the nickname has changed
+    if before.nick != after.nick:
+        # If the nickname was changed by someone else
+        if after.nick != before.nick:  # Check if the user changed their nickname
+            if after.nick != after.name:  # Avoid resetting to default if user didn't change it
+                # Revert the nickname to the original one
+                await after.edit(nick=before.nick)
 
 @bot.event
 async def on_message(message):
