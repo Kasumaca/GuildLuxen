@@ -231,7 +231,7 @@ async def on_message(message):
             print(f"[Reply Embed Error] {e}")
             reply_embed = None
 
-# Function to check if the message consists only of custom emoji tags or markdown emoji links
+    # Function to check if the message consists only of custom emoji tags or markdown emoji links
     def is_emoji_only_message(content: str):
         """
         Check if the message consists entirely of custom emoji tags or markdown emoji links.
@@ -245,15 +245,21 @@ async def on_message(message):
         # Split content into words to check for the presence of any non-emoji text
         words = content.split()
 
+        print(f"Checking message: {content}")
+        print(f"Words in message: {words}")
+        
         # Check if each word is either an emoji tag or a markdown emoji link
         for word in words:
+            print(f"Checking word: {word}")
             if not re.match(emoji_pattern, word):  # If it doesn't match the emoji pattern
+                print(f"Non-emoji word found: {word}")
                 return False  # It contains text along with emojis
 
         return True  # All components are emojis
 
-    # Example usage:
-    message_content = "hello [:emoji1:](https://someurl.com) world"
+
+    # Test case
+    message_content = "[:emoji:](https://someurl.com)"
     if is_emoji_only_message(message_content):
         print("This is an emoji-only message.")
     else:
