@@ -231,12 +231,12 @@ async def on_message(message):
             print(f"[Reply Embed Error] {e}")
             reply_embed = None
 
-    # Function to check if a message contains only emojis and no text
+    # Function to check if an emoji tag is standalone
     def is_standalone_emoji(emoji_tag: str, content: str):
         """
-        Check if the emoji tag appears standalone (not part of a larger sentence).
+        Check if the emoji tag is surrounded by spaces or at the beginning/end of the message.
         """
-        # Make sure the emoji tag is surrounded by spaces or is at the beginning/end of the string
+        # Check if the emoji is surrounded by spaces or at the beginning/end of the message
         pattern = rf'(^|\s){re.escape(emoji_tag)}(\s|$)'
         return bool(re.search(pattern, content))
 
@@ -246,7 +246,7 @@ async def on_message(message):
         Replace custom emoji tags like <:emoji_name:emoji_id> with the image URL, 
         but only if the emoji tag is standalone (not part of text).
         """
-        # Match custom emoji tags <:emoji_name:emoji_id>
+        # Pattern to match custom emoji tags: <:emoji_name:emoji_id> or <a:emoji_name:emoji_id>
         custom_emoji_pattern = r'<(a?):([a-zA-Z0-9_]+):(\d+)>'
 
         def emoji_replacement(match):
@@ -255,15 +255,14 @@ async def on_message(message):
             emoji_id = match.group(3)
             emoji_tag = f"<:{emoji_name}:{emoji_id}>"
 
-            # Ensure the emoji is standalone
+            # If it's a standalone emoji, replace it with its image URL
             if is_standalone_emoji(emoji_tag, content):
-                # Replace the emoji with its URL
                 return f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
             else:
-                # If not standalone, return the emoji tag as is
+                # If it's part of text, do not replace it
                 return emoji_tag
 
-        # Replace custom emojis with their image URLs
+        # Replace all custom emojis with their image URLs
         return re.sub(custom_emoji_pattern, emoji_replacement, content)
 
     # Webhook sending logic
