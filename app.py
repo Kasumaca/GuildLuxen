@@ -106,47 +106,64 @@ async def on_ready():
 @bot.event
 async def on_command(command):
     ...
+import discord
+
+@bot.command()
+async def check_roles(ctx):
+    guild = ctx.guild
+    bot = ctx.me  # Get the bot's own member object
+    
+    # Loop through all roles in the server
+    for role in guild.roles:
+        role_name = role.name
+        role_position = role.position  # Position of the role in the hierarchy
+        print(f"Role: {role_name}, Position: {role_position}")
+
+        # List members who have this role
+        members_with_role = [member for member in guild.members if role in member.roles]
+        if members_with_role:
+            print(f"  Members with role '{role_name}':")
+            for member in members_with_role:
+                print(f"    - {member.display_name} (ID: {member.id})")
+        else:
+            print(f"  No members have the role '{role_name}'")
+
+    # Also print the bot's own top role position
+    bot_top_role_position = max(role.position for role in bot.roles)
+    print(f"Bot's top role position: {bot_top_role_position}")
+    print(f"Bot's highest role: {bot.top_role.name}")
 
 @bot.event
 async def on_member_update(before: discord.Member, after: discord.Member):
+    # Check if the nickname has actually changed
     if before.nick != after.nick:
-        await asyncio.sleep(1.5)  # Give audit logs time to update
+        # Ignore if the bot itself is making the change
+        if after.id == bot.user.id:
+            return
+
+        # Wait briefly to ensure audit logs are updated
+        await asyncio.sleep(1)
 
         guild = after.guild
-
-        try:
-            entry = None
-            async for log in guild.audit_logs(limit=5, action=discord.AuditLogAction.member_update):
-                if log.target.id == after.id and hasattr(log.changes, 'before'):
-                    entry = log
-                    break
-
-            if entry:
+        
+        # Check the audit logs to see who made the change
+        async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.member_update):
+            if entry.target.id == after.id:
                 changer = entry.user
 
-                # Ignore if the bot itself made the change
-                if changer.id == bot.user.id:
-                    return
+                # If the changer is the user themselves or the bot, do nothing
+                if changer.id == after.id or changer.id == bot.user.id:
+                    return  # Ignore if the user or bot made the change
 
-                # Ignore if too old (more than ~10 seconds)
-                if (datetime.datetime.utcnow() - entry.created_at).total_seconds() > 10:
-                    return
-
-                # Ignore if changed by user or approved staff
-                if changer.id != after.id: #and changer.id not in config_location["Owner"]:
-                    try:
-                        await after.edit(nick=before.nick, reason="Nickname reverted - not changed by user or approved staff.")
-                        print(f"Reverted nickname of {after.display_name} (changed by {changer.display_name})")
-                    except discord.Forbidden:
-                        print("Missing permissions to change nickname.")
-                    except discord.HTTPException as e:
-                        print(f"Nickname revert failed: {e}")
-        except discord.Forbidden:
-            print("Missing audit log permissions.")
-        except Exception as e:
-            print(f"Error checking audit logs: {e}")
-
-
+                # If someone else made the change, revert it
+                try:
+                    await after.edit(nick=before.nick, reason="Nickname reverted - changed by someone else.")
+                    print(f"Reverted nickname of {after.display_name} (changed by {changer.display_name})")
+                except discord.Forbidden:
+                    print("Bot doesn't have permission to change nicknames.")
+                except discord.HTTPException as e:
+                    print(f"Failed to revert nickname: {e}")
+                break  # Stop after the first successful revert
 @bot.event
 async def on_message(message):
     if message.author.bot or message.webhook_id:
