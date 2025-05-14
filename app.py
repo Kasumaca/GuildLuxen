@@ -3,7 +3,7 @@ import os
 import threading
 import discord
 import psycopg2
-import aiohttp, io, asyncio, re
+import aiohttp, io, asyncio, re, datetime
 from io import BytesIO
 
 from discord.ext import commands
@@ -110,31 +110,42 @@ async def on_command(command):
 @bot.event
 async def on_member_update(before: discord.Member, after: discord.Member):
     if before.nick != after.nick:
-        await asyncio.sleep(1)  # Wait to ensure audit log is updated
+        await asyncio.sleep(1.5)  # Give audit logs time to update
 
         guild = after.guild
 
         try:
-            async for entry in guild.audit_logs(limit=1, action=discord.AuditLogAction.member_update):
-                if entry.target.id == after.id:
-                    changer = entry.user
-
-                    # Skip revert if changed by the user themselves or allowed owner
-                    if changer.id != after.id and changer.id not in config_location["Owner"]:
-                        try:
-                            await after.edit(nick=before.nick, reason="Nickname reverted - not changed by user or approved staff.")
-                            pass
-                        except discord.Forbidden:
-                            pass
-                        except discord.HTTPException as e:
-                            pass
-                    else:
-                        pass
+            entry = None
+            async for log in guild.audit_logs(limit=5, action=discord.AuditLogAction.member_update):
+                if log.target.id == after.id and hasattr(log.changes, 'before'):
+                    entry = log
                     break
+
+            if entry:
+                changer = entry.user
+
+                # Ignore if the bot itself made the change
+                if changer.id == bot.user.id:
+                    return
+
+                # Ignore if too old (more than ~10 seconds)
+                if (datetime.datetime.utcnow() - entry.created_at).total_seconds() > 10:
+                    return
+
+                # Ignore if changed by user or approved staff
+                if changer.id != after.id and changer.id not in config_location["Owner"]:
+                    try:
+                        await after.edit(nick=before.nick, reason="Nickname reverted - not changed by user or approved staff.")
+                        print(f"Reverted nickname of {after.display_name} (changed by {changer.display_name})")
+                    except discord.Forbidden:
+                        print("Missing permissions to change nickname.")
+                    except discord.HTTPException as e:
+                        print(f"Nickname revert failed: {e}")
         except discord.Forbidden:
-            pass
+            print("Missing audit log permissions.")
         except Exception as e:
-            pass
+            print(f"Error checking audit logs: {e}")
+
 
 @bot.event
 async def on_message(message):
