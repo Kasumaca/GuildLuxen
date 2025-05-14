@@ -231,7 +231,7 @@ async def on_message(message):
             print(f"[Reply Embed Error] {e}")
             reply_embed = None
 
-    # Function to check if the message consists only of emoji tags (either :emoji_name: or [:emoji_name:](image_url))
+# Function to check if the message consists only of custom emoji tags or markdown emoji links
     def is_emoji_only_message(content: str):
         """
         Check if the message consists entirely of custom emoji tags or markdown emoji links.
@@ -239,19 +239,25 @@ async def on_message(message):
         # Match custom emoji tags like :emoji_name: and markdown emoji links like [:emoji_name:](image_url)
         emoji_pattern = r'(:[a-zA-Z0-9_]+:|\[:[a-zA-Z0-9_]+:\]\([^\)]+\))'  # Match :emoji_name: or [:emoji_name:](image_url)
         
-        # Remove whitespace and check if the content consists solely of emoji tags or markdown-style emoji links
+        # Remove leading/trailing whitespace
         content = content.strip()
 
-        # If the entire content is made up of emoji tags or emoji markdown links, return True
-        return bool(re.match(f"^({emoji_pattern})+$", content))
+        # Split content into words to check for the presence of any non-emoji text
+        words = content.split()
+
+        # Check if each word is either an emoji tag or a markdown emoji link
+        for word in words:
+            if not re.match(emoji_pattern, word):  # If it doesn't match the emoji pattern
+                return False  # It contains text along with emojis
+
+        return True  # All components are emojis
 
     # Example usage:
-    message_content = "[:emoji1:](https://someurl.com) [:emoji2:](https://someurl2.com)"
+    message_content = "hello [:emoji1:](https://someurl.com) world"
     if is_emoji_only_message(message_content):
         print("This is an emoji-only message.")
     else:
         print("This message contains both text and emojis.")
-
     # Forward message to other linked channels
     async with aiohttp.ClientSession() as session:
         for channel_id, webhook_url in connected_channels:
