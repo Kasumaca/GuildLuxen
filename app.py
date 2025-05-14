@@ -231,39 +231,43 @@ async def on_message(message):
             print(f"[Reply Embed Error] {e}")
             reply_embed = None
 
-    # Function to check if the message consists only of custom emoji tags or markdown emoji links
-    def is_emoji_only_message(content: str):
+
+
+    # Function to check if a message is just a standalone emoji (not part of text)
+    def is_standalone_emoji(emoji_tag: str, content: str):
         """
-        Check if the message consists entirely of custom emoji tags or markdown emoji links.
+        Check if the emoji tag appears standalone (not part of a larger sentence).
         """
-        # Match custom emoji tags like :emoji_name: and markdown emoji links like [:emoji_name:](image_url)
-        emoji_pattern = r'(:[a-zA-Z0-9_]+:|\[:[a-zA-Z0-9_]+:\]\([^\)]+\))'  # Match :emoji_name: or [:emoji_name:](image_url)
-        
-        # Remove leading/trailing whitespace
-        content = content.strip()
-
-        # Split content into words to check for the presence of any non-emoji text
-        words = content.split()
-
-        print(f"Checking message: {content}")
-        print(f"Words in message: {words}")
-        
-        # Check if each word is either an emoji tag or a markdown emoji link
-        for word in words:
-            print(f"Checking word: {word}")
-            if not re.match(emoji_pattern, word):  # If it doesn't match the emoji pattern
-                print(f"Non-emoji word found: {word}")
-                return False  # It contains text along with emojis
-
-        return True  # All components are emojis
+        # Make sure the emoji tag is surrounded by spaces or is at the beginning/end of the string
+        pattern = rf'(^|\s){re.escape(emoji_tag)}(\s|$)'
+        return bool(re.search(pattern, content))
 
 
-    # Test case
-    message_content = "[:emoji:](https://someurl.com)"
-    if is_emoji_only_message(message_content):
-        print("This is an emoji-only message.")
-    else:
-        print("This message contains both text and emojis.")
+    # Function to replace custom emoji tags with their image URLs
+    def replace_emoji_with_url(content: str):
+        """
+        Replace custom emoji tags like <:emoji_name:emoji_id> with the image URL, 
+        but only if the emoji tag is standalone (not part of text).
+        """
+        # Match custom emoji tags <:emoji_name:emoji_id>
+        custom_emoji_pattern = r'<(a?):([a-zA-Z0-9_]+):(\d+)>'
+
+        def emoji_replacement(match):
+            animated = match.group(1) == 'a'  # Check if the emoji is animated
+            emoji_name = match.group(2)
+            emoji_id = match.group(3)
+            emoji_tag = f"<:{emoji_name}:{emoji_id}>"
+
+            # Ensure the emoji is standalone
+            if is_standalone_emoji(emoji_tag, content):
+                # Replace the emoji with its URL
+                return f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
+            else:
+                # If not standalone, return the emoji tag as is
+                return emoji_tag
+
+        # Replace custom emojis with their image URLs
+        return re.sub(custom_emoji_pattern, emoji_replacement, content)
     # Forward message to other linked channels
     async with aiohttp.ClientSession() as session:
         for channel_id, webhook_url in connected_channels:
@@ -283,38 +287,11 @@ async def on_message(message):
                     "content": message.content,  # Start with original content
                 }
 
-                is_emoji_only = is_emoji_only_message(message.content)
-
-                if is_emoji_only:
-                    print("This is an emoji-only message.")
-                    # Here you would replace emojis with image URLs
-                    # For now, this is where you would do emoji replacement logic if needed
-
-                else:
-                    print("This message contains both text and emojis.")
-                    # Here you would leave the emojis as is without replacing them
-                    # Replace custom emoji tags with their image URLs in the content
-                replaced_content = message.content
-                # Pattern to match custom emojis in the format <:emoji_name:emoji_id> or <a:emoji_name:emoji_id>
-                custom_emoji_pattern = r'<(a?):(\w+):(\d+)>'
-
-                custom_emojis = re.findall(custom_emoji_pattern, message.content)
-                
-                for animated, name, emoji_id in custom_emojis:
-                    emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
-                    emoji_tag = f"<:{name}:{emoji_id}>"
-                    replaced_content = replaced_content.replace(emoji_tag, emoji_url, 1)
+                # Replace custom emoji tags with their image URLs in the content
+                replaced_content = replace_emoji_with_url(message.content)
 
                 # Update content with replaced emoji URLs
                 send_kwargs["content"] = replaced_content
-
-                # Handle extracting image URLs
-                #img_urls = extract_image_urls(replaced_content)
-                #if img_urls:
-                #    for url in img_urls[:3]:  # Limit number of embeds to 3
-                #        img_embed = discord.Embed(color=discord.Color.blurple())
-                #        img_embed.set_image(url=url)
-                #        send_kwargs["embeds"].append(img_embed)
 
                 # Append the fileBytes if there are any attachments
                 if fileBytes:
@@ -322,6 +299,7 @@ async def on_message(message):
 
                 if reply_embed:
                     send_kwargs["embeds"].append(reply_embed)
+
                 # Send the message via webhook
                 await webhook.send(**send_kwargs)
 
