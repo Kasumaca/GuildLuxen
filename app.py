@@ -231,9 +231,7 @@ async def on_message(message):
             print(f"[Reply Embed Error] {e}")
             reply_embed = None
 
-
-
-    # Function to check if a message is just a standalone emoji (not part of text)
+    # Function to check if a message contains only emojis and no text
     def is_standalone_emoji(emoji_tag: str, content: str):
         """
         Check if the emoji tag appears standalone (not part of a larger sentence).
@@ -241,7 +239,6 @@ async def on_message(message):
         # Make sure the emoji tag is surrounded by spaces or is at the beginning/end of the string
         pattern = rf'(^|\s){re.escape(emoji_tag)}(\s|$)'
         return bool(re.search(pattern, content))
-
 
     # Function to replace custom emoji tags with their image URLs
     def replace_emoji_with_url(content: str):
@@ -268,7 +265,8 @@ async def on_message(message):
 
         # Replace custom emojis with their image URLs
         return re.sub(custom_emoji_pattern, emoji_replacement, content)
-    # Forward message to other linked channels
+
+    # Webhook sending logic
     async with aiohttp.ClientSession() as session:
         for channel_id, webhook_url in connected_channels:
             try:
@@ -305,6 +303,7 @@ async def on_message(message):
 
             except Exception as e:
                 continue
+
     await bot.process_commands(message)
 
 def replaceEmoji(text):
