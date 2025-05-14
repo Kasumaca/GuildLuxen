@@ -232,6 +232,36 @@ async def on_message(message):
             reply_embed = None
 
 
+    # Function to check if a message is purely emoji-based
+    def is_emoji_only_message(content: str):
+        # Check if the message consists only of emojis (custom or regular)
+        emoji_pattern = r':([a-zA-Z0-9_]+):'  # Match custom emojis like :emoji:
+        return bool(re.match(f"^({emoji_pattern})+$", content.strip()))  # Only emojis, no text
+
+    # Function to replace custom emojis with their image URLs
+    def replace_custom_emojis_with_image_url(content: str, guild_emojis: list, is_emoji_only: bool):
+        emoji_pattern = r':([a-zA-Z0-9_]+):'
+        matches = re.findall(emoji_pattern, content)
+
+        for emoji_name in matches:
+            emoji = discord.utils.get(guild_emojis, name=emoji_name)
+            if emoji:
+                # If it's an emoji-only message, replace it with an image URL
+                if is_emoji_only:
+                    content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({get_emoji_url(emoji_name)})")
+                # Otherwise, leave it as :emoji:
+                else:
+                    continue
+            else:
+                # If emoji is not found, replace with image URL
+                content = content.replace(f":{emoji_name}:", f"[:{emoji_name}:]({get_emoji_url(emoji_name)})")
+        
+        return content
+
+    # Helper function to get the emoji URL (for missing emojis)
+    def get_emoji_url(emoji_name):
+        # Return the URL for missing emojis (can adjust based on your needs)
+        return f"https://cdn.discordapp.com/emojis/{emoji_name}.png"  # Or .gif for animated emojis
 
     # Forward message to other linked channels
     async with aiohttp.ClientSession() as session:
@@ -252,35 +282,20 @@ async def on_message(message):
                     "content": message.content,  # Start with original content
                 }
 
-                # Replace custom emoji tags with their image URLs in the content
-                replaced_content = message.content
-                # Pattern to match custom emojis in the format <:emoji_name:emoji_id> or <a:emoji_name:emoji_id>
-                custom_emoji_pattern = r'<(a?):(\w+):(\d+)>'
+                # Check if the message only contains emojis
+                is_emoji_only = is_emoji_only_message(message.content)
 
-                custom_emojis = re.findall(custom_emoji_pattern, message.content)
-                
-                for animated, name, emoji_id in custom_emojis:
-                    emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
-                    emoji_tag = f"<:{name}:{emoji_id}>"
-                    replaced_content = replaced_content.replace(emoji_tag, emoji_url, 1)
-
-                # Update content with replaced emoji URLs
+                # Replace custom emojis in the content
+                replaced_content = replace_custom_emojis_with_image_url(message.content, guild.emojis, is_emoji_only)
                 send_kwargs["content"] = replaced_content
 
-                # Handle extracting image URLs
-                #img_urls = extract_image_urls(replaced_content)
-                #if img_urls:
-                #    for url in img_urls[:3]:  # Limit number of embeds to 3
-                #        img_embed = discord.Embed(color=discord.Color.blurple())
-                #        img_embed.set_image(url=url)
-                #        send_kwargs["embeds"].append(img_embed)
-
-                # Append the fileBytes if there are any attachments
+                # Handle file attachments and replies if needed
                 if fileBytes:
                     send_kwargs["files"] = [discord.File(BytesIO(file[0]), file[1]) for file in fileBytes]
 
                 if reply_embed:
                     send_kwargs["embeds"].append(reply_embed)
+                
                 # Send the message via webhook
                 await webhook.send(**send_kwargs)
 
