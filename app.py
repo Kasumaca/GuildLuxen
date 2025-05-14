@@ -228,42 +228,45 @@ async def on_message(message):
             )
 
         except Exception as e:
-            print(f"[Reply Embed Error] {e}")
             reply_embed = None
 
-    # Function to check if an emoji tag is standalone
+    def replace_emoji_with_url(message_content: str):
+        replaced_content = message_content
+
+        # Pattern to match custom emojis in the format <:emoji_name:emoji_id> or <a:emoji_name:emoji_id>
+        custom_emoji_pattern = r'<(a?):(\w+):(\d+)>'
+
+        custom_emojis = re.findall(custom_emoji_pattern, message_content)
+
+        for animated, name, emoji_id in custom_emojis:
+            emoji_tag = f"<:{name}:{emoji_id}>"
+            
+            # Check if emoji is standalone (not part of text)
+            if is_standalone_emoji(emoji_tag, message_content):
+                emoji_url = f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
+                replaced_content = replaced_content.replace(emoji_tag, emoji_url, 1)
+
+        return replaced_content
+
     def is_standalone_emoji(emoji_tag: str, content: str):
-        """
-        Check if the emoji tag is surrounded by spaces or at the beginning/end of the message.
-        """
-        # Check if the emoji is surrounded by spaces or at the beginning/end of the message
+        # Check if the content contains other non-emoji text
+        words_in_content = content.split()
+
+        # If there's any word in the message that is not an emoji, return False (don't replace the emoji)
+        for word in words_in_content:
+            # If the word is not an emoji (not matching the custom emoji pattern), then it's part of the text
+            if not re.match(r'<(a?):(\w+):(\d+)>', word):
+                return False  # There's text, so don't replace the emoji
+
+        # If the emoji is standalone (surrounded by spaces, or at the start/end of the message), return True
         pattern = rf'(^|\s){re.escape(emoji_tag)}(\s|$)'
-        return bool(re.search(pattern, content))
 
-    # Function to replace custom emoji tags with their image URLs
-    def replace_emoji_with_url(content: str):
-        """
-        Replace custom emoji tags like <:emoji_name:emoji_id> with the image URL, 
-        but only if the emoji tag is standalone (not part of text).
-        """
-        # Pattern to match custom emoji tags: <:emoji_name:emoji_id> or <a:emoji_name:emoji_id>
-        custom_emoji_pattern = r'<(a?):([a-zA-Z0-9_]+):(\d+)>'
+        match = re.search(pattern, content)
+        
+        if match:
+            return True
+        return False
 
-        def emoji_replacement(match):
-            animated = match.group(1) == 'a'  # Check if the emoji is animated
-            emoji_name = match.group(2)
-            emoji_id = match.group(3)
-            emoji_tag = f"<:{emoji_name}:{emoji_id}>"
-
-            # If it's a standalone emoji, replace it with its image URL
-            if is_standalone_emoji(emoji_tag, content):
-                return f"https://cdn.discordapp.com/emojis/{emoji_id}.{'gif' if animated else 'png'}"
-            else:
-                # If it's part of text, do not replace it
-                return emoji_tag
-
-        # Replace all custom emojis with their image URLs
-        return re.sub(custom_emoji_pattern, emoji_replacement, content)
 
     # Webhook sending logic
     async with aiohttp.ClientSession() as session:
@@ -284,8 +287,11 @@ async def on_message(message):
                     "content": message.content,  # Start with original content
                 }
 
+                # Remove any @everyone or @here mentions from the message
+                sanitized_content = re.sub(r'@(everyone|here)', '[REMOVED]', message.content)
+
                 # Replace custom emoji tags with their image URLs in the content
-                replaced_content = replace_emoji_with_url(message.content)
+                replaced_content = replace_emoji_with_url(sanitized_content)
 
                 # Update content with replaced emoji URLs
                 send_kwargs["content"] = replaced_content
