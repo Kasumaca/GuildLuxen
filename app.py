@@ -28,7 +28,7 @@ def get_prefix(client, message): ##first we define get_prefix
     #prefixes = fileIO("config/prefixes.json", "load")
     prefix = None #prefixes.get(str(message.guild.id), None)
     if prefix is None:
-        prefix = "Miri"
+        prefix = "Luxen"
         save_prefix(prefix, message)
     return prefix
 
